@@ -69,6 +69,7 @@ const showMainMenu = () => {
         return `
             <div class="player-summary ${selectedPlayerIndex === playerNumber - 1 ? 'selected' : ''}" data-player-index="${playerNumber - 1}">
                 <h2>플레이어 ${playerNumber}: ${player.nickname} (경험치: ${player.experience})</h2>
+                <p>승리: ${player.winCount} | 연승: ${player.winningStreak}</p>
                 <img src="${player.monster.imageBase64}" width="100">
                 <div>
                     ${player.monster.skills.map((skill, index) => `
@@ -176,10 +177,12 @@ const showMainMenu = () => {
 
     // 경험치 초기화 버튼 이벤트 리스너
     document.getElementById('reset-exp-button').addEventListener('click', () => {
-        showConfirmationModal('(주의) 경험치와 스킬 레벨이 모두 초기화 됩니다!', () => {
+        showConfirmationModal('(주의) 전투와 관련된 모든 정보가 초기화 됩니다!', () => {
             gameState.players.forEach(player => {
                 if (player) {
                     player.experience = 0;
+                    player.winCount = 0; // 승리 횟수 초기화 추가
+                    player.winningStreak = 0; // 연승수 초기화 추가
                     if (player.monster && player.monster.skills) {
                         player.monster.skills.forEach(skill => {
                             skill.level = 1; // 스킬 레벨도 초기화
@@ -315,7 +318,9 @@ const updateBattleScreen = () => {
         hpBar.value = curr;
         // (선택) 필요하면 여기서 overlay.width/right 초기화 가능
         // 애니메이션 완료 후 게임 종료 여부 확인
-        battleSystem.checkGameOver();
+        if (!battleSystem.isGameOver && battleSystem.checkGameOver()) { // 게임이 종료되지 않았고, 종료 조건이 충족되면
+            return; // 더 이상 진행하지 않음
+        }
       },
       { once: true }
     );
@@ -387,7 +392,11 @@ const showGameOverScreen = (winner) => {
     const html = `
         <h1>게임 종료</h1>
         <h2>승자: ${winner.nickname}</h2>
-        <button id="back-to-menu-button">메인 메뉴로 돌아가기</button>
+        <div class="game-over-stats">
+            <p class="stat-item">승리: <span>${winner.winCount}</span></p>
+            <p class="stat-item">연승: <span>${winner.winningStreak}</span></p>
+        </div>
+        <button id="back-to-menu-button">전투 준비 화면으로 돌아가기</button>
     `;
     renderScreen(html);
 
@@ -445,6 +454,8 @@ const initGame = () => {
             if (playerData) {
                 const player = new Player(playerData.nickname);
                 player.experience = playerData.experience;
+                player.winCount = playerData.winCount || 0; // 승리 횟수 복원
+                player.winningStreak = playerData.winningStreak || 0; // 연승수 복원
                 if (playerData.monster) {
                     const monster = new Monster(playerData.monster.imageBase64);
                     monster.hp = playerData.monster.hp;

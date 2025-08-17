@@ -421,3 +421,30 @@ progress::-moz-progress-bar {
     color: #FFD700; /* 화살표 색상 */
     font-weight: bold;
 }
+/* Game Over Screen Styles */
+.game-over-stats {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.game-over-stats .stat-item {
+    font-size: 20px;
+    color: #FFD700; /* Gold color for stats */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    background-color: rgba(30, 30, 45, 0.8);
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: 1px solid #ADD8E6;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    min-width: 200px;
+}
+
+.game-over-stats .stat-item span {
+    font-weight: bold;
+    color: #4CAF50; /* Green for the numbers */
+    margin-left: 10px;
+}

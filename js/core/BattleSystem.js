@@ -8,6 +8,7 @@ export class BattleSystem {
         this.onAttack = onAttack;         // 공격 시 호출될 콜백
         this.onTurnChange = onTurnChange; // 턴 변경 시 호출될 콜백
         this.onGameOver = onGameOver;     // 게임 종료 시 호출될 콜백
+        this.isGameOver = false; // 게임 종료 여부 플래그 추가
     }
 
     // 전투 시작
@@ -15,6 +16,7 @@ export class BattleSystem {
         this.player1.monster.hp = 100; // 전투 시작 시 HP 초기화
         this.player2.monster.hp = 100;
         this.currentPlayer = Math.random() < 0.5 ? this.player1 : this.player2;
+        this.isGameOver = false; // 게임 시작 시 플래그 초기화
     }
 
     // 턴 전환
@@ -46,12 +48,24 @@ export class BattleSystem {
 
     // 게임 종료 여부 확인
     checkGameOver() {
+        if (this.isGameOver) return true; // 이미 게임이 종료되었으면 중복 처리 방지
+
         if (this.player1.monster.hp <= 0) {
-            this.onGameOver(this.player2); // Player 1이 졌으므로 Player 2가 승자
+            // Player 2 승리
+            this.player2.winCount++;
+            this.player2.winningStreak++;
+            this.player1.winningStreak = 0;
+            this.onGameOver(this.player2);
+            this.isGameOver = true; // 게임 종료 플래그 설정
             return true;
         }
         if (this.player2.monster.hp <= 0) {
-            this.onGameOver(this.player1); // Player 2가 졌으므로 Player 1이 승자
+            // Player 1 승리
+            this.player1.winCount++;
+            this.player1.winningStreak++;
+            this.player2.winningStreak = 0;
+            this.onGameOver(this.player1);
+            this.isGameOver = true; // 게임 종료 플래그 설정
             return true;
         }
         return false;
