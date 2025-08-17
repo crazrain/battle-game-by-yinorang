@@ -171,6 +171,33 @@ const showSkillScreen = (playerNumber, isFromMenu = false) => {
     });
 };
 
+// 닉네임 변경 화면 (메인 메뉴에서 호출)
+const showChangeNicknameScreen = (playerNumber) => {
+    const player = gameState.players[playerNumber - 1];
+    const html = `
+        <h2>플레이어 ${playerNumber} 닉네임 변경</h2>
+        <input type="text" id="nickname-input" value="${player.nickname}">
+        <button id="save-nickname-button">저장</button>
+        <button id="cancel-nickname-button">취소</button>
+    `;
+    renderScreen(html);
+
+    document.getElementById('save-nickname-button').addEventListener('click', () => {
+        const newNickname = document.getElementById('nickname-input').value;
+        if (newNickname && newNickname.trim() !== '') {
+            player.nickname = newNickname.trim();
+            gameState.saveState();
+            showMainMenu();
+        } else {
+            alert('닉네임을 입력해주세요.');
+        }
+    });
+
+    document.getElementById('cancel-nickname-button').addEventListener('click', () => {
+        showMainMenu();
+    });
+};
+
 let selectedPlayerIndex = 0; // 0 for player 1, 1 for player 2
 
 // 전투 대기 화면 (메인 메뉴)
@@ -208,6 +235,7 @@ const showMainMenu = () => {
         </div>
         <div class="menu-buttons">
             <p><strong>[ ${selectedPlayer.nickname} ]</strong> 설정 변경</p>
+            <button id="change-player-name-button">플레이어 이름 변경</button>
             <button id="change-monster-button">몬스터 변경</button>
             <button id="change-skills-button">스킬 이름 변경</button>
             <hr>
@@ -226,6 +254,9 @@ const showMainMenu = () => {
     });
 
     // 설정 변경 버튼 이벤트 리스너
+    document.getElementById('change-player-name-button').addEventListener('click', () => {
+        showChangeNicknameScreen(selectedPlayerIndex + 1);
+    });
     document.getElementById('change-monster-button').addEventListener('click', () => {
         showMonsterScreen(selectedPlayerIndex + 1, true); // 'isFromMenu' 플래그 전달
     });
