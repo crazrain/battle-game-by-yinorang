@@ -401,4 +401,23 @@ progress::-moz-progress-bar {
     background: linear-gradient(to bottom, #6c757d, #5a6268);
     border-color: #545b62;
 }
+/* New styles for monster image comparison */
+.monster-image-comparison {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px; /* 이미지와 화살표 사이 간격 */
+    margin-bottom: 15px;
+}
 
+.monster-image-comparison img {
+    border: 2px solid #ADD8E6;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.comparison-arrow {
+    font-size: 30px;
+    color: #FFD700; /* 화살표 색상 */
+    font-weight: bold;
+}
