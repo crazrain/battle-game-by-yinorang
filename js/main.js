@@ -6,154 +6,28 @@ import { BattleSystem } from './core/BattleSystem.js';
 import { showConfirmationModal, showAlertModal } from './ui/modal.js';
 import { renderScreen } from './ui/screenUtils.js';
 import { showStartScreen } from './ui/screens/startScreen.js';
+import { showNicknameScreen } from './ui/screens/nicknameScreen.js';
+import { showMonsterScreen } from './ui/screens/monsterScreen.js';
+import { showSkillScreen, getRandomSoundPath } from './ui/screens/skillScreen.js';
 
 let gameState;
 let battleSystem;
 
 // 하드코딩된 스킬 사운드 파일 목록 (assets/audio/skill 폴더 기준)
 const skillSoundFiles = [
-    "skill/Chamelot_Delvigne_Model_1873_11_mm_Revolver_Single_Shot_07.wav",
-    "skill/gun_grenade_launcher_shot_02.wav",
-    "skill/HK53_Shot-01.wav",
-    "skill/HK53_Shot-02.wav",
-    "skill/Kalashnikov_AK_47_762_X_39_mm_Automatic_Rifle_Single_Shot_03.wav",
-    "skill/L96A1_Shot-04.wav",
-    "skill/Model 700_Shot-01.wav",
-    "skill/Smith_Wesson_Chief_Special_38_Special_Revolver_Single_Shot_1_01.wav",
-    "skill/tank_shot_1.wav",
-    "skill/Uzi_Shot-03.wav"
+    "skill/Chamelot_Delvigne_Model_1873_11_mm_Revolver_Single_Shot_07.mp3",
+    "skill/gun_grenade_launcher_shot_02.mp3",
+    "skill/HK53_Shot-01.mp3",
+    "skill/HK53_Shot-02.mp3",
+    "skill/Kalashnikov_AK_47_762_X_39_mm_Automatic_Rifle_Single_Shot_03.mp3",
+    "skill/L96A1_Shot-04.mp3",
+    "skill/Model 700_Shot-01.mp3",
+    "skill/Smith_Wesson_Chief_Special_38_Special_Revolver_Single_Shot_1_01.mp3",
+    "skill/tank_shot_1.mp3",
+    "skill/Uzi_Shot-03.mp3"
 ];
 
-// 랜덤 사운드 경로를 가져오는 헬퍼 함수
-const getRandomSoundPath = () => {
-    const randomIndex = Math.floor(Math.random() * skillSoundFiles.length);
-    const soundPath = `assets/audio/${skillSoundFiles[randomIndex]}`;
-    console.log('생성된 랜덤 사운드 경로:', soundPath);
-    return soundPath;
-};
-
-// 닉네임 생성 화면
-const showNicknameScreen = (playerNumber) => {
-    const html = `
-        <h2>플레이어 ${playerNumber} 닉네임 설정</h2>
-        <input type="text" id="nickname-input" placeholder="닉네임을 입력하세요">
-        <button id="save-nickname-button">저장</button>
-    `;
-    renderScreen(html);
-
-    document.getElementById('save-nickname-button').addEventListener('click', () => {
-        const nickname = document.getElementById('nickname-input').value;
-        if (nickname) {
-            const player = new Player(nickname);
-            if (playerNumber === 1) {
-                gameState.players[0] = player;
-            } else {
-                gameState.players[1] = player;
-            }
-            checkGameState();
-        } else {
-            showAlertModal('닉네임을 입력해주세요.');
-        }
-    });
-};
-
-// 몬스터 생성 화면
-const showMonsterScreen = (playerNumber, isFromMenu = false) => {
-    const player = gameState.players[playerNumber - 1];
-    const currentMonsterImage = (isFromMenu && player && player.monster) ? `<img src="${player.monster.imageBase64}" width="150" style="margin-bottom: 10px;">` : '';
-
-    const html = `
-        <h2>플레이어 ${playerNumber} 몬스터 설정</h2>
-        ${currentMonsterImage}
-        <p>몬스터 이미지를 업로드하세요.</p>
-        <input type="file" id="monster-image-input" accept="image/*">
-        <button id="save-monster-button">저장</button>
-        <button id="cancel-monster-button">취소</button>
-    `;
-    renderScreen(html);
-
-    document.getElementById('cancel-monster-button').addEventListener('click', () => {
-        if (isFromMenu) {
-            showMainMenu();
-        } else {
-            checkGameState();
-        }
-    });
-
-    document.getElementById('save-monster-button').addEventListener('click', () => {
-        const input = document.getElementById('monster-image-input');
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const monster = new Monster(e.target.result);
-                // 기존 스킬이 있다면 유지
-                if (gameState.players[playerNumber - 1] && gameState.players[playerNumber - 1].monster) {
-                    monster.skills = gameState.players[playerNumber - 1].monster.skills;
-                }
-                gameState.players[playerNumber - 1].monster = monster;
-                
-                if (isFromMenu) {
-                    gameState.saveState();
-                    showMainMenu();
-                } else {
-                    checkGameState();
-                }
-            };
-            reader.readAsDataURL(input.files[0]);
-        } else {
-            showAlertModal('이미지를 업로드해주세요.');
-        }
-    });
-};
-
-// 스킬 생성 화면
-const showSkillScreen = (playerNumber, isFromMenu = false) => {
-    const player = gameState.players[playerNumber - 1];
-    const currentSkills = (isFromMenu && player && player.monster && player.monster.skills) ? player.monster.skills : [{}, {}, {}];
-
-    const html = `
-        <h2>플레이어 ${playerNumber} 스킬 설정</h2>
-        <p>스킬 3개의 이름을 정해주세요.</p>
-        <input type="text" id="skill1-name" placeholder="스킬 1 이름" value="${currentSkills[0].name || ''}">
-        <input type="text" id="skill2-name" placeholder="스킬 2 이름" value="${currentSkills[1].name || ''}">
-        <input type="text" id="skill3-name" placeholder="스킬 3 이름" value="${currentSkills[2].name || ''}">
-        <button id="save-skills-button">저장</button>
-        <button id="cancel-skills-button">취소</button>
-    `;
-    renderScreen(html);
-
-    document.getElementById('cancel-skills-button').addEventListener('click', () => {
-        if (isFromMenu) {
-            showMainMenu();
-        } else {
-            checkGameState();
-        }
-    });
-
-    document.getElementById('save-skills-button').addEventListener('click', () => {
-        const skill1Name = document.getElementById('skill1-name').value;
-        const skill2Name = document.getElementById('skill2-name').value;
-        const skill3Name = document.getElementById('skill3-name').value;
-
-        if (skill1Name && skill2Name && skill3Name) {
-            const skills = [
-                new Skill(skill1Name, undefined, undefined, getRandomSoundPath()),
-                new Skill(skill2Name, undefined, undefined, getRandomSoundPath()),
-                new Skill(skill3Name, undefined, undefined, getRandomSoundPath())
-            ];
-            gameState.players[playerNumber - 1].monster.skills = skills;
-            gameState.saveState();
-            
-            if (isFromMenu) {
-                showMainMenu();
-            } else {
-                checkGameState();
-            }
-        } else {
-            showAlertModal('모든 스킬의 이름을 입력해주세요.');
-        }
-    });
-};
+// 닉네임 변경 화면 (메인 메뉴에서 호출)
 
 // 닉네임 변경 화면 (메인 메뉴에서 호출)
 const showChangeNicknameScreen = (playerNumber) => {
@@ -242,10 +116,27 @@ const showMainMenu = () => {
         showChangeNicknameScreen(selectedPlayerIndex + 1);
     });
     document.getElementById('change-monster-button').addEventListener('click', () => {
-        showMonsterScreen(selectedPlayerIndex + 1, true); // 'isFromMenu' 플래그 전달
+        const player = gameState.players[selectedPlayerIndex];
+        const currentMonsterImage = player && player.monster ? player.monster.imageBase64 : null;
+        showMonsterScreen(selectedPlayerIndex + 1, currentMonsterImage, (imageBase64) => {
+            const monster = new Monster(imageBase64);
+            // 기존 스킬이 있다면 유지
+            if (player.monster) {
+                monster.skills = player.monster.skills;
+            }
+            player.monster = monster;
+            gameState.saveState();
+            showMainMenu();
+        }, showMainMenu);
     });
     document.getElementById('change-skills-button').addEventListener('click', () => {
-        showSkillScreen(selectedPlayerIndex + 1, true); // 'isFromMenu' 플래그 전달
+        const player = gameState.players[selectedPlayerIndex];
+        const currentSkills = player && player.monster ? player.monster.skills : [{}, {}, {}];
+        showSkillScreen(selectedPlayerIndex + 1, currentSkills, skillSoundFiles, (skills) => {
+            player.monster.skills = skills;
+            gameState.saveState();
+            showMainMenu();
+        }, showMainMenu);
     });
 
     // 스킬 업그레이드 버튼 이벤트 리스너
@@ -361,7 +252,7 @@ const addSkillButtonListeners = () => {
             if (playerNumber === currentPlayerNumber) {
                 const skill = battleSystem.currentPlayer.monster.skills[skillIndex];
                 // Play skill sound
-                const soundPathToPlay = getRandomSoundPath(); // 스킬 사용 시마다 새로운 랜덤 사운드 경로 가져오기
+                const soundPathToPlay = getRandomSoundPath(skillSoundFiles); // 스킬 사용 시마다 새로운 랜덤 사운드 경로 가져오기
                 if (soundPathToPlay) {
                     console.log('스킬 사운드 경로:', soundPathToPlay);
                     const sound = new Audio(soundPathToPlay);
@@ -416,17 +307,37 @@ const showGameOverScreen = (winner) => {
 // 게임 상태를 확인하고 다음 단계로 진행
 const checkGameState = () => {
     if (!gameState.players[0]) {
-        showNicknameScreen(1);
+        showNicknameScreen(1, (nickname) => {
+            gameState.players[0] = new Player(nickname);
+            checkGameState();
+        });
     } else if (!gameState.players[0].monster) {
-        showMonsterScreen(1);
+        showMonsterScreen(1, null, (imageBase64) => {
+            gameState.players[0].monster = new Monster(imageBase64);
+            checkGameState();
+        }, checkGameState);
     } else if (gameState.players[0].monster.skills.length === 0) {
-        showSkillScreen(1);
+        showSkillScreen(1, [], skillSoundFiles, (skills) => {
+            gameState.players[0].monster.skills = skills;
+            gameState.saveState();
+            checkGameState();
+        }, checkGameState);
     } else if (!gameState.players[1]) {
-        showNicknameScreen(2);
+        showNicknameScreen(2, (nickname) => {
+            gameState.players[1] = new Player(nickname);
+            checkGameState();
+        });
     } else if (!gameState.players[1].monster) {
-        showMonsterScreen(2);
+        showMonsterScreen(2, null, (imageBase64) => {
+            gameState.players[1].monster = new Monster(imageBase64);
+            checkGameState();
+        }, checkGameState);
     } else if (gameState.players[1].monster.skills.length === 0) {
-        showSkillScreen(2);
+        showSkillScreen(2, [], skillSoundFiles, (skills) => {
+            gameState.players[1].monster.skills = skills;
+            gameState.saveState();
+            checkGameState();
+        }, checkGameState);
     } else {
         showMainMenu();
     }
