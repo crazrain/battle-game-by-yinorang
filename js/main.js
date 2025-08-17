@@ -240,60 +240,96 @@ const showBattleScreen = () => {
 };
 
 // 전투 화면 정보 업데이트
+// 유틸
+const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+
 const updateBattleScreen = () => {
-    const p1CurrentHp = battleSystem.player1.monster.hp;
-    const p2CurrentHp = battleSystem.player2.monster.hp;
+  const players = [
+    {
+      monster: battleSystem.player1.monster,
+      prevHp: previousP1Hp,
+      hpBar: document.getElementById('p1-hp'),
+      overlay: document.getElementById('p1-damage-overlay'),
+      setPrevHp: (v) => (previousP1Hp = v),
+    },
+    {
+      monster: battleSystem.player2.monster,
+      prevHp: previousP2Hp,
+      hpBar: document.getElementById('p2-hp'),
+      overlay: document.getElementById('p2-damage-overlay'),
+      setPrevHp: (v) => (previousP2Hp = v),
+    },
+  ];
 
-    const p1HpBar = document.getElementById('p1-hp');
-    const p2HpBar = document.getElementById('p2-hp');
-    const p1DamageOverlay = document.getElementById('p1-damage-overlay');
-    const p2DamageOverlay = document.getElementById('p2-damage-overlay');
+  const applyDamageOverlay = ({ monster, prevHp, hpBar, overlay, setPrevHp }) => {
+    const maxHp = monster.maxHp ?? 100;
+    const curr = clamp(monster.hp, 0, maxHp);
+    const prev = clamp(prevHp ?? maxHp, 0, maxHp);
 
-    // Player 1 데미지 애니메이션
-    if (p1CurrentHp < previousP1Hp) {
-        const damageTaken = previousP1Hp - p1CurrentHp;
-        const damagePercentage = (damageTaken / 100) * 100; // Assuming max HP is 100
-        const currentHpPercentage = (p1CurrentHp / 100) * 100;
+    // <progress>라면 max를 보정
+    if ('max' in hpBar) hpBar.max = maxHp;
 
-        p1DamageOverlay.style.width = `${damagePercentage}%`;
-        p1DamageOverlay.style.right = `${100 - previousP1Hp}%`; // 이전 HP 위치에서 시작
-        p1DamageOverlay.style.opacity = 1;
-        
-        // 애니메이션 후 오버레이 숨기기 및 HP 바 업데이트
-        setTimeout(() => {
-            p1DamageOverlay.style.opacity = 0;
-            p1HpBar.value = p1CurrentHp;
-        }, 500); // CSS transition duration
-    } else {
-        p1HpBar.value = p1CurrentHp;
+    // 회복/변화없음 → 바로 갱신
+    if (curr >= prev) {
+      hpBar.value = curr;
+      setPrevHp(curr);
+      return;
     }
 
-    // Player 2 데미지 애니메이션
-    if (p2CurrentHp < previousP2Hp) {
-        const damageTaken = previousP2Hp - p2CurrentHp;
-        const damagePercentage = (damageTaken / 100) * 100; // Assuming max HP is 100
-        const currentHpPercentage = (p2CurrentHp / 100) * 100;
-
-        p2DamageOverlay.style.width = `${damagePercentage}%`;
-        p2DamageOverlay.style.right = `${100 - previousP2Hp}%`; // 이전 HP 위치에서 시작
-        p2DamageOverlay.style.opacity = 1;
-
-        // 애니메이션 후 오버레이 숨기기 및 HP 바 업데이트
-        setTimeout(() => {
-            p2DamageOverlay.style.opacity = 0;
-            p2HpBar.value = p2CurrentHp;
-        }, 500); // CSS transition duration
-    } else {
-        p2HpBar.value = p2CurrentHp;
+    // 동시 애니메이션 방지: 이전 타이머 정리
+    if (overlay._fadeTimer) {
+      clearTimeout(overlay._fadeTimer);
+      overlay._fadeTimer = null;
     }
 
-    // 이전 HP 값 업데이트
-    previousP1Hp = p1CurrentHp;
-    previousP2Hp = p2CurrentHp;
+    // 데미지 구간(%) 계산
+    const damagePct = ((prev - curr) / maxHp) * 100;
+    const prevPct = (prev / maxHp) * 100;
 
-    document.getElementById('turn-indicator').innerText = `${battleSystem.currentPlayer.nickname}의 턴`;
-    updateSkillButtons();
+    // 1) 위치/너비는 '즉시' 설정 (트랜지션 끄기)
+    const oldTransition = overlay.style.transition;
+    overlay.style.transition = 'none';
+    overlay.style.opacity = 0; // 시작 상태
+    overlay.style.width = `${Math.max(0, damagePct)}%`;
+    overlay.style.right = `${Math.max(0, 100 - prevPct)}%`;
+
+    // 강제 리플로우로 스타일 적용 확정
+    // eslint-disable-next-line no-unused-expressions
+    overlay.offsetWidth;
+
+    // 2) opacity만 트랜지션으로 처리 (width 트랜지션 금지)
+    overlay.style.transition = 'opacity 500ms ease-out';
+    overlay.style.opacity = 1;
+
+    // 짧은 딜레이 후 페이드아웃 시작 (다음 프레임)
+    overlay._fadeTimer = setTimeout(() => {
+      overlay.style.opacity = 0;
+      overlay._fadeTimer = null;
+    }, 50);
+
+    // opacity 트랜지션 끝날 때 HP 바 값을 커밋
+    overlay.addEventListener(
+      'transitionend',
+      (e) => {
+        if (e.propertyName !== 'opacity') return;
+        hpBar.value = curr;
+        // (선택) 필요하면 여기서 overlay.width/right 초기화 가능
+      },
+      { once: true }
+    );
+
+    // 이전 HP 갱신
+    setPrevHp(curr);
+  };
+
+  players.forEach(applyDamageOverlay);
+
+  document.getElementById('turn-indicator').innerText =
+    `${battleSystem.currentPlayer.nickname}의 턴`;
+  updateSkillButtons();
 };
+
+
 
 // 스킬 버튼 이벤트 리스너 추가
 const addSkillButtonListeners = () => {
