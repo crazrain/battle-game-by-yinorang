@@ -12,6 +12,8 @@ import { showSkillScreen, getRandomSoundPath } from './ui/screens/skillScreen.js
 
 let gameState;
 let battleSystem;
+let previousP1Hp = 100; // Player 1의 이전 HP
+let previousP2Hp = 100; // Player 2의 이전 HP
 
 // 하드코딩된 스킬 사운드 파일 목록 (assets/audio/skill 폴더 기준)
 const skillSoundFiles = [
@@ -202,11 +204,17 @@ const showBattleScreen = () => {
         <div class="battle-container">
             <div class="player-info" id="player1-info">
                 <span>${p1.nickname}</span>
-                <progress id="p1-hp" value="${p1.monster.hp}" max="100"></progress>
+                <div class="hp-bar-container">
+                    <progress id="p1-hp" value="${p1.monster.hp}" max="100"></progress>
+                    <div id="p1-damage-overlay" class="damage-overlay"></div>
+                </div>
             </div>
             <div class="player-info" id="player2-info">
                 <span>${p2.nickname}</span>
-                <progress id="p2-hp" value="${p2.monster.hp}" max="100"></progress>
+                <div class="hp-bar-container">
+                    <progress id="p2-hp" value="${p2.monster.hp}" max="100"></progress>
+                    <div id="p2-damage-overlay" class="damage-overlay"></div>
+                </div>
             </div>
 
             <div class="monster-area">
@@ -233,8 +241,56 @@ const showBattleScreen = () => {
 
 // 전투 화면 정보 업데이트
 const updateBattleScreen = () => {
-    document.getElementById('p1-hp').value = battleSystem.player1.monster.hp;
-    document.getElementById('p2-hp').value = battleSystem.player2.monster.hp;
+    const p1CurrentHp = battleSystem.player1.monster.hp;
+    const p2CurrentHp = battleSystem.player2.monster.hp;
+
+    const p1HpBar = document.getElementById('p1-hp');
+    const p2HpBar = document.getElementById('p2-hp');
+    const p1DamageOverlay = document.getElementById('p1-damage-overlay');
+    const p2DamageOverlay = document.getElementById('p2-damage-overlay');
+
+    // Player 1 데미지 애니메이션
+    if (p1CurrentHp < previousP1Hp) {
+        const damageTaken = previousP1Hp - p1CurrentHp;
+        const damagePercentage = (damageTaken / 100) * 100; // Assuming max HP is 100
+        const currentHpPercentage = (p1CurrentHp / 100) * 100;
+
+        p1DamageOverlay.style.width = `${damagePercentage}%`;
+        p1DamageOverlay.style.right = `${100 - previousP1Hp}%`; // 이전 HP 위치에서 시작
+        p1DamageOverlay.style.opacity = 1;
+        
+        // 애니메이션 후 오버레이 숨기기 및 HP 바 업데이트
+        setTimeout(() => {
+            p1DamageOverlay.style.opacity = 0;
+            p1HpBar.value = p1CurrentHp;
+        }, 500); // CSS transition duration
+    } else {
+        p1HpBar.value = p1CurrentHp;
+    }
+
+    // Player 2 데미지 애니메이션
+    if (p2CurrentHp < previousP2Hp) {
+        const damageTaken = previousP2Hp - p2CurrentHp;
+        const damagePercentage = (damageTaken / 100) * 100; // Assuming max HP is 100
+        const currentHpPercentage = (p2CurrentHp / 100) * 100;
+
+        p2DamageOverlay.style.width = `${damagePercentage}%`;
+        p2DamageOverlay.style.right = `${100 - previousP2Hp}%`; // 이전 HP 위치에서 시작
+        p2DamageOverlay.style.opacity = 1;
+
+        // 애니메이션 후 오버레이 숨기기 및 HP 바 업데이트
+        setTimeout(() => {
+            p2DamageOverlay.style.opacity = 0;
+            p2HpBar.value = p2CurrentHp;
+        }, 500); // CSS transition duration
+    } else {
+        p2HpBar.value = p2CurrentHp;
+    }
+
+    // 이전 HP 값 업데이트
+    previousP1Hp = p1CurrentHp;
+    previousP2Hp = p2CurrentHp;
+
     document.getElementById('turn-indicator').innerText = `${battleSystem.currentPlayer.nickname}의 턴`;
     updateSkillButtons();
 };
