@@ -13,7 +13,6 @@ export class GameState {
         const savedState = localStorage.getItem('gameState');
         if (savedState) {
             const state = JSON.parse(savedState);
-            // 클래스 인스턴스로 복원하는 로직 추가 필요
             return state;
         }
         return null;

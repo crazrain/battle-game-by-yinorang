@@ -24,10 +24,8 @@ const skillSoundFiles = [
     "skill/Model 700_Shot-01.mp3",
     "skill/Smith_Wesson_Chief_Special_38_Special_Revolver_Single_Shot_1_01.mp3",
     "skill/tank_shot_1.mp3",
-    "skill/Uzi_Shot-03.mp3"
+        "skill/Uzi_Shot-03.mp3"
 ];
-
-// 닉네임 변경 화면 (메인 메뉴에서 호출)
 
 // 닉네임 변경 화면 (메인 메뉴에서 호출)
 const showChangeNicknameScreen = (playerNumber) => {
