@@ -9,21 +9,16 @@ let battleSystem;
 
 // 하드코딩된 스킬 사운드 파일 목록 (assets/audio/skill 폴더 기준)
 const skillSoundFiles = [
-    "skill/Download Free Hit Sound Effects.mp3",
-    "skill/Download Free Hit Sound Effects_2.mp3",
-    "skill/Download Free Hit Sound Effects_3.mp3",
-    "skill/Download Free Hit Sound Effects_4.mp3",
-    "skill/Download Free Hit Sound Effects_5.mp3",
-    "skill/Download Free Hit Sound Effects_6.mp3",
-    "skill/Download Free Hit Sound Effects_7.mp3",
-    "skill/Download Free Hit Sound Effects_8.mp3",
-    "skill/Download Free Hit Sound Effects_9.mp3",
-    "skill/Download Free Hit Sound Effects_10.mp3",
-    "skill/Download Free Hit Sound Effects_11.mp3",
-    "skill/Download Free Hit Sound Effects_12.mp3",
-    "skill/Download Free Hit Sound Effects_13.mp3",
-    "skill/Download Free Hit Sound Effects_14.mp3",
-    "skill/Download Free Hit Sound Effects_15.mp3"
+    "skill/Chamelot_Delvigne_Model_1873_11_mm_Revolver_Single_Shot_07.wav",
+    "skill/gun_grenade_launcher_shot_02.wav",
+    "skill/HK53_Shot-01.wav",
+    "skill/HK53_Shot-02.wav",
+    "skill/Kalashnikov_AK_47_762_X_39_mm_Automatic_Rifle_Single_Shot_03.wav",
+    "skill/L96A1_Shot-04.wav",
+    "skill/Model 700_Shot-01.wav",
+    "skill/Smith_Wesson_Chief_Special_38_Special_Revolver_Single_Shot_1_01.wav",
+    "skill/tank_shot_1.wav",
+    "skill/Uzi_Shot-03.wav"
 ];
 
 // 랜덤 사운드 경로를 가져오는 헬퍼 함수
@@ -133,9 +128,9 @@ const showSkillScreen = (playerNumber, isFromMenu = false) => {
 
         if (skill1Name && skill2Name && skill3Name) {
             const skills = [
-                new Skill(skill1Name, 0, 5, getRandomSoundPath()),
-                new Skill(skill2Name, 0, 5, getRandomSoundPath()),
-                new Skill(skill3Name, 0, 5, getRandomSoundPath())
+                new Skill(skill1Name, undefined, undefined, getRandomSoundPath()),
+                new Skill(skill2Name, undefined, undefined, getRandomSoundPath()),
+                new Skill(skill3Name, undefined, undefined, getRandomSoundPath())
             ];
             gameState.players[playerNumber - 1].monster.skills = skills;
             gameState.saveState();
@@ -303,9 +298,10 @@ const addSkillButtonListeners = () => {
             if (playerNumber === currentPlayerNumber) {
                 const skill = battleSystem.currentPlayer.monster.skills[skillIndex];
                 // Play skill sound
-                if (skill.soundPath) {
-//                    console.log('스킬 사운드 경로:', skill.soundPath);
-                    const sound = new Audio(skill.soundPath);
+                const soundPathToPlay = getRandomSoundPath(); // 스킬 사용 시마다 새로운 랜덤 사운드 경로 가져오기
+                if (soundPathToPlay) {
+                    console.log('스킬 사운드 경로:', soundPathToPlay);
+                    const sound = new Audio(soundPathToPlay);
                     sound.volume = 0.5; // Set volume
                     sound.play()
                         .then(() => {
@@ -375,7 +371,6 @@ const checkGameState = () => {
 
 // 게임 초기화 및 시작
 const initGame = () => {
-    localStorage.removeItem('gameState'); // 저장된 게임 상태 초기화
     const loadedState = GameState.loadState();
     if (loadedState) {
         gameState = new GameState();
