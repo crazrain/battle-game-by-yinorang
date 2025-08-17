@@ -68,7 +68,7 @@ const showNicknameScreen = (playerNumber) => {
             }
             checkGameState();
         } else {
-            alert('닉네임을 입력해주세요.');
+            showAlertModal('닉네임을 입력해주세요.');
         }
     });
 };
@@ -117,7 +117,7 @@ const showMonsterScreen = (playerNumber, isFromMenu = false) => {
             };
             reader.readAsDataURL(input.files[0]);
         } else {
-            alert('이미지를 업로드해주세요.');
+            showAlertModal('이미지를 업로드해주세요.');
         }
     });
 };
@@ -166,7 +166,7 @@ const showSkillScreen = (playerNumber, isFromMenu = false) => {
                 checkGameState();
             }
         } else {
-            alert('모든 스킬의 이름을 입력해주세요.');
+            showAlertModal('모든 스킬의 이름을 입력해주세요.');
         }
     });
 };
@@ -189,7 +189,7 @@ const showChangeNicknameScreen = (playerNumber) => {
             gameState.saveState();
             showMainMenu();
         } else {
-            alert('닉네임을 입력해주세요.');
+            showAlertModal('닉네임을 입력해주세요.');
         }
     });
 
@@ -239,8 +239,8 @@ const showMainMenu = () => {
             <button id="change-monster-button">몬스터 변경</button>
             <button id="change-skills-button">스킬 이름 변경</button>
             <hr>
+            <button id="reset-exp-button" class="reset-exp-button">초기화</button>
             <button id="start-battle-button" class="start-battle-button">전투 시작</button>
-            <button id="reset-exp-and-start-button" class="reset-exp-button">경험치 초기화 후 전투 시작</button>
         </div>
     `;
     renderScreen(html);
@@ -299,9 +299,9 @@ const showMainMenu = () => {
 
     document.getElementById('start-battle-button').addEventListener('click', startBattleLogic);
 
-    // 경험치 초기화 후 전투 시작 버튼 이벤트 리스너
-    document.getElementById('reset-exp-and-start-button').addEventListener('click', () => {
-        if (confirm('모든 플레이어의 경험치를 초기화하고 전투를 시작하시겠습니까?')) {
+    // 경험치 초기화 버튼 이벤트 리스너
+    document.getElementById('reset-exp-button').addEventListener('click', () => {
+        showConfirmationModal('(주의) 경험치와 스킬 레벨이 모두 초기화 됩니다!', () => {
             gameState.players.forEach(player => {
                 if (player) {
                     player.experience = 0;
@@ -315,8 +315,8 @@ const showMainMenu = () => {
                 }
             });
             gameState.saveState();
-            startBattleLogic(); // 경험치 초기화 후 전투 시작
-        }
+            showMainMenu(); // 초기화 후 메뉴 새로고침
+        });
     });
 };
 
@@ -427,6 +427,70 @@ const showGameOverScreen = (winner) => {
     document.getElementById('back-to-menu-button').addEventListener('click', () => {
         showMainMenu();
     });
+};
+
+// 확인 모달을 표시하는 함수
+const showConfirmationModal = (message, onConfirm) => {
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+
+    const messageEl = document.createElement('p');
+    messageEl.textContent = message;
+
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = '확인';
+    confirmButton.className = 'modal-confirm-button';
+
+    const cancelButton = document.createElement('button');
+    cancelButton.textContent = '취소';
+    cancelButton.className = 'modal-cancel-button';
+
+    modalContent.appendChild(messageEl);
+    modalContent.appendChild(confirmButton);
+    modalContent.appendChild(cancelButton);
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
+
+    const closeModal = () => {
+        document.body.removeChild(modalOverlay);
+    };
+
+    confirmButton.addEventListener('click', () => {
+        onConfirm();
+        closeModal();
+    });
+
+    cancelButton.addEventListener('click', closeModal);
+};
+
+// 알림 모달을 표시하는 함수
+const showAlertModal = (message) => {
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content';
+
+    const messageEl = document.createElement('p');
+    messageEl.textContent = message;
+
+    const confirmButton = document.createElement('button');
+    confirmButton.textContent = '확인';
+    confirmButton.className = 'modal-confirm-button';
+
+    modalContent.appendChild(messageEl);
+    modalContent.appendChild(confirmButton);
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
+
+    const closeModal = () => {
+        document.body.removeChild(modalOverlay);
+    };
+
+    confirmButton.addEventListener('click', closeModal);
 };
 
 // 게임 상태를 확인하고 다음 단계로 진행
