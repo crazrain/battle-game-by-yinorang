@@ -39,12 +39,21 @@ export class BattleSystem {
         const logMessage = `${this.currentPlayer.nickname}이(가) ${skill.name}(으)로 ${damage}의 데미지를 입혔다!`;
         this.onAttack(logMessage); // 공격 로그 콜백 호출
         
-        // 전투 종료 확인
-        if (opponent.monster.hp <= 0) {
-            this.onGameOver(this.currentPlayer); // 승자 정보를 전달
-            return;
-        }
+        // 전투 종료 확인은 UI 애니메이션 후 main.js에서 호출하도록 변경
 
         this.switchTurn();
+    }
+
+    // 게임 종료 여부 확인
+    checkGameOver() {
+        if (this.player1.monster.hp <= 0) {
+            this.onGameOver(this.player2); // Player 1이 졌으므로 Player 2가 승자
+            return true;
+        }
+        if (this.player2.monster.hp <= 0) {
+            this.onGameOver(this.player1); // Player 2가 졌으므로 Player 1이 승자
+            return true;
+        }
+        return false;
     }
 }

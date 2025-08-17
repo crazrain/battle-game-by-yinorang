@@ -314,6 +314,8 @@ const updateBattleScreen = () => {
         if (e.propertyName !== 'opacity') return;
         hpBar.value = curr;
         // (선택) 필요하면 여기서 overlay.width/right 초기화 가능
+        // 애니메이션 완료 후 게임 종료 여부 확인
+        battleSystem.checkGameOver();
       },
       { once: true }
     );
