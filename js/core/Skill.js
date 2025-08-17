@@ -6,8 +6,15 @@ export class Skill {
         this.level = 1;
     }
 
+    // 다음 레벨업에 필요한 경험치
+    get requiredExp() {
+        return this.level * 10;
+    }
+
     // 스킬 레벨업 로직
-    levelUp(exp) {
-        // TODO: 경험치를 사용한 레벨업 및 공격력 강화 로직
+    levelUp() {
+        this.level++;
+        this.minAttack += 2; // 레벨당 최소/최대 공격력 2씩 증가
+        this.maxAttack += 2;
     }
 }

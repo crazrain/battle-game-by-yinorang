@@ -52,7 +52,7 @@ const showNicknameScreen = (playerNumber) => {
 };
 
 // 몬스터 생성 화면
-const showMonsterScreen = (playerNumber) => {
+const showMonsterScreen = (playerNumber, isFromMenu = false) => {
     const html = `
         <h2>플레이어 ${playerNumber} 몬스터 설정</h2>
         <p>몬스터 이미지를 업로드하세요.</p>
@@ -67,8 +67,18 @@ const showMonsterScreen = (playerNumber) => {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const monster = new Monster(e.target.result);
+                // 기존 스킬이 있다면 유지
+                if (gameState.players[playerNumber - 1] && gameState.players[playerNumber - 1].monster) {
+                    monster.skills = gameState.players[playerNumber - 1].monster.skills;
+                }
                 gameState.players[playerNumber - 1].monster = monster;
-                checkGameState();
+                
+                if (isFromMenu) {
+                    gameState.saveState();
+                    showMainMenu();
+                } else {
+                    checkGameState();
+                }
             };
             reader.readAsDataURL(input.files[0]);
         } else {
@@ -78,7 +88,7 @@ const showMonsterScreen = (playerNumber) => {
 };
 
 // 스킬 생성 화면
-const showSkillScreen = (playerNumber) => {
+const showSkillScreen = (playerNumber, isFromMenu = false) => {
     const html = `
         <h2>플레이어 ${playerNumber} 스킬 설정</h2>
         <p>기본 스킬 3개의 이름을 정해주세요. (공격력: 0-5)</p>
@@ -101,35 +111,101 @@ const showSkillScreen = (playerNumber) => {
                 new Skill(skill3Name, 0, 5)
             ];
             gameState.players[playerNumber - 1].monster.skills = skills;
-            gameState.saveState(); // 현재 플레이어 설정 완료 후 저장
-            checkGameState();
+            gameState.saveState();
+            
+            if (isFromMenu) {
+                showMainMenu();
+            } else {
+                checkGameState();
+            }
         } else {
             alert('모든 스킬의 이름을 입력해주세요.');
         }
     });
 };
 
-// 메인 메뉴 화면
+let selectedPlayerIndex = 0; // 0 for player 1, 1 for player 2
+
+// 전투 대기 화면 (메인 메뉴)
 const showMainMenu = () => {
     const player1 = gameState.players[0];
     const player2 = gameState.players[1];
+    const selectedPlayer = gameState.players[selectedPlayerIndex];
+
+    const playerInfoHTML = (player, playerNumber) => {
+        if (!player) return `<div><h2>플레이어 ${playerNumber}</h2><p>설정 필요</p></div>`;
+        return `
+            <div class="player-summary ${selectedPlayerIndex === playerNumber - 1 ? 'selected' : ''}" data-player-index="${playerNumber - 1}">
+                <h2>플레이어 ${playerNumber}: ${player.nickname} (경험치: ${player.experience})</h2>
+                <img src="${player.monster.imageBase64}" width="100">
+                <div>
+                    ${player.monster.skills.map((skill, index) => `
+                        <div class="skill-info">
+                            <span>${skill.name} (Lv.${skill.level}) | ${skill.minAttack}~${skill.maxAttack}</span>
+                            ${selectedPlayerIndex === playerNumber - 1 ? 
+                                `<button class="upgrade-skill-button" data-skill-index="${index}" ${player.experience < skill.requiredExp ? 'disabled' : ''}>
+                                    업그레이드 (${skill.requiredExp} EXP)
+                                 </button>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    };
+
     const html = `
-        <h1>메인 메뉴</h1>
-        <div style="display: flex; justify-content: space-around;">
-            <div>
-                <h2>플레이어 1: ${player1.nickname}</h2>
-                <img src="${player1.monster.imageBase64}" width="150">
-            </div>
-            <div>
-                <h2>플레이어 2: ${player2.nickname}</h2>
-                <img src="${player2.monster.imageBase64}" width="150">
-            </div>
+        <h1>전투 준비</h1>
+        <div class="main-menu-layout">
+            ${playerInfoHTML(player1, 1)}
+            ${playerInfoHTML(player2, 2)}
         </div>
-        <button id="start-battle-button">전투 시작</button>
+        <div class="menu-buttons">
+            <p><strong>[ ${selectedPlayer.nickname} ]</strong> 설정 변경</p>
+            <button id="change-monster-button">몬스터 변경</button>
+            <button id="change-skills-button">스킬 이름 변경</button>
+            <hr>
+            <button id="start-battle-button">전투 시작</button>
+        </div>
     `;
     renderScreen(html);
 
+    // 플레이어 선택 이벤트 리스너
+    document.querySelectorAll('.player-summary').forEach(el => {
+        el.addEventListener('click', (e) => {
+            selectedPlayerIndex = parseInt(e.currentTarget.dataset.playerIndex);
+            showMainMenu(); // 다시 렌더링하여 선택 상태 업데이트
+        });
+    });
+
+    // 설정 변경 버튼 이벤트 리스너
+    document.getElementById('change-monster-button').addEventListener('click', () => {
+        showMonsterScreen(selectedPlayerIndex + 1, true); // 'isFromMenu' 플래그 전달
+    });
+    document.getElementById('change-skills-button').addEventListener('click', () => {
+        showSkillScreen(selectedPlayerIndex + 1, true); // 'isFromMenu' 플래그 전달
+    });
+
+    // 스킬 업그레이드 버튼 이벤트 리스너
+    document.querySelectorAll('.upgrade-skill-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const skillIndex = parseInt(e.target.dataset.skillIndex);
+            const skill = selectedPlayer.monster.skills[skillIndex];
+            if (selectedPlayer.experience >= skill.requiredExp) {
+                selectedPlayer.experience -= skill.requiredExp;
+                skill.levelUp();
+                gameState.saveState();
+                showMainMenu(); // 변경사항 반영하여 다시 렌더링
+            }
+        });
+    });
+
+    // 전투 시작 버튼 이벤트 리스너
     document.getElementById('start-battle-button').addEventListener('click', () => {
+        const onAttack = (log) => {
+            const logEl = document.getElementById('battle-log');
+            logEl.innerText = log;
+            updateBattleScreen();
+        };
         const onTurnChange = () => {
             updateBattleScreen();
         };
@@ -137,7 +213,7 @@ const showMainMenu = () => {
             showGameOverScreen(winner);
         };
         
-        battleSystem = new BattleSystem(gameState.players[0], gameState.players[1], onTurnChange, onGameOver);
+        battleSystem = new BattleSystem(gameState.players[0], gameState.players[1], onAttack, onTurnChange, onGameOver);
         battleSystem.startBattle();
         showBattleScreen();
     });
@@ -161,6 +237,7 @@ const showBattleScreen = () => {
 
             <div class="monster-area">
                 <img src="${p1.monster.imageBase64}" class="monster" id="p1-monster">
+                <div id="battle-log" class="battle-log"></div>
                 <img src="${p2.monster.imageBase64}" class="monster" id="p2-monster">
             </div>
 

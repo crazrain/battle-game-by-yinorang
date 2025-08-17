@@ -52,6 +52,38 @@ input[type="text"], input[type="file"] {
     margin: 10px;
 }
 
+/* Main Menu Styles */
+.main-menu-layout {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 20px;
+}
+.player-summary {
+    border: 2px solid #555;
+    padding: 10px;
+    width: 45%;
+    cursor: pointer;
+}
+.player-summary.selected {
+    border-color: #fff;
+}
+.skill-info {
+    font-size: 12px;
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.upgrade-skill-button {
+    padding: 2px 5px;
+    font-size: 10px;
+}
+.menu-buttons {
+    border-top: 2px solid #fff;
+    padding-top: 10px;
+}
+
 /* Battle Screen Styles */
 .battle-container {
     width: 100%;
@@ -63,6 +95,7 @@ input[type="text"], input[type="file"] {
         "p1-skills turn p2-skills";
     grid-template-rows: auto 1fr auto;
     grid-template-columns: 1fr auto 1fr;
+    align-items: center;
 }
 
 .player-info {
@@ -74,7 +107,7 @@ input[type="text"], input[type="file"] {
 .monster-area {
     grid-area: monster-area;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
 }
 .monster {
@@ -83,6 +116,11 @@ input[type="text"], input[type="file"] {
 }
 #p2-monster {
     transform: scaleX(-1); /* 좌우 반전 */
+}
+.battle-log {
+    font-size: 14px;
+    min-width: 200px;
+    text-align: center;
 }
 
 .skills-area {
