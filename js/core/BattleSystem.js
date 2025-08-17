@@ -1,0 +1,44 @@
+export class BattleSystem {
+    constructor(player1, player2, onTurnChange, onGameOver) {
+        this.player1 = player1;
+        this.player2 = player2;
+        this.currentPlayer = null;
+        this.onTurnChange = onTurnChange; // 턴 변경 시 호출될 콜백
+        this.onGameOver = onGameOver;     // 게임 종료 시 호출될 콜백
+    }
+
+    // 전투 시작
+    startBattle() {
+        this.player1.monster.hp = 100; // 전투 시작 시 HP 초기화
+        this.player2.monster.hp = 100;
+        this.currentPlayer = Math.random() < 0.5 ? this.player1 : this.player2;
+        console.log(`${this.currentPlayer.nickname}의 선공!`);
+    }
+
+    // 턴 전환
+    switchTurn() {
+        this.currentPlayer = this.currentPlayer === this.player1 ? this.player2 : this.player1;
+        this.onTurnChange(); // 턴 변경 콜백 호출
+    }
+
+    // 공격 실행
+    attack(skill) {
+        const damage = Math.floor(Math.random() * (skill.maxAttack - skill.minAttack + 1)) + skill.minAttack;
+        const opponent = this.currentPlayer === this.player1 ? this.player2 : this.player1;
+        
+        opponent.monster.hp -= damage;
+        if (opponent.monster.hp < 0) {
+            opponent.monster.hp = 0;
+        }
+
+        console.log(`${this.currentPlayer.nickname}이(가) ${skill.name}으로 ${damage}의 데미지를 입혔다!`);
+        
+        // 전투 종료 확인
+        if (opponent.monster.hp <= 0) {
+            this.onGameOver(this.currentPlayer); // 승자 정보를 전달
+            return;
+        }
+
+        this.switchTurn();
+    }
+}
