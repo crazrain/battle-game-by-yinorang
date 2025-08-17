@@ -174,7 +174,7 @@ hr {
     grid-template-areas:
         "p1-info . p2-info"
         "monster-area monster-area monster-area"
-        "p1-skills turn p2-skills";
+        "skills-area skills-area skills-area"; /* 스킬 영역을 하나로 합침 */
     grid-template-rows: auto 1fr auto;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
@@ -251,7 +251,7 @@ progress::-moz-progress-bar {
 .battle-log {
     grid-area: battle-log; /* Assign grid area */
     font-size: 16px;
-    min-width: 250px; /* Wider log */
+    min-width: 150px; /* 데미지 표시 영역 최소 가로 150px로 줄임 */
     text-align: center;
     background-color: rgba(0, 0, 0, 0.7);
     border: 2px solid #FFD700;
@@ -268,7 +268,8 @@ progress::-moz-progress-bar {
 .skills-area {
     grid-area: p1-skills / span 3;
     display: flex;
-    justify-content: space-around; /* Distribute skills evenly */
+    justify-content: center; /* 중앙 정렬 */
+    align-items: center; /* 수직 중앙 정렬 (선택 사항, 필요 시) */
     padding-top: 15px;
     border-top: 1px solid #555;
 }
@@ -276,6 +277,7 @@ progress::-moz-progress-bar {
     display: flex;
     flex-direction: row; /* Skills in a row */
     gap: 10px; /* Space between skill buttons */
+    justify-content: center; /* 각 플레이어 스킬 버튼 묶음 내부 중앙 정렬 */
 }
 .skill-button {
     padding: 10px 15px;
@@ -290,8 +292,7 @@ progress::-moz-progress-bar {
     background: #555;
     border-color: #777;
 }
-#p1-skills { grid-area: p1-skills; }
-#p2-skills { grid-area: p2-skills; }
+
 
 #turn-indicator {
     grid-area: turn;

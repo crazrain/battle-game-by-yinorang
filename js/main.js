@@ -75,13 +75,26 @@ const showNicknameScreen = (playerNumber) => {
 
 // 몬스터 생성 화면
 const showMonsterScreen = (playerNumber, isFromMenu = false) => {
+    const player = gameState.players[playerNumber - 1];
+    const currentMonsterImage = (isFromMenu && player && player.monster) ? `<img src="${player.monster.imageBase64}" width="150" style="margin-bottom: 10px;">` : '';
+
     const html = `
         <h2>플레이어 ${playerNumber} 몬스터 설정</h2>
+        ${currentMonsterImage}
         <p>몬스터 이미지를 업로드하세요.</p>
         <input type="file" id="monster-image-input" accept="image/*">
         <button id="save-monster-button">저장</button>
+        <button id="cancel-monster-button">취소</button>
     `;
     renderScreen(html);
+
+    document.getElementById('cancel-monster-button').addEventListener('click', () => {
+        if (isFromMenu) {
+            showMainMenu();
+        } else {
+            checkGameState();
+        }
+    });
 
     document.getElementById('save-monster-button').addEventListener('click', () => {
         const input = document.getElementById('monster-image-input');
@@ -111,15 +124,27 @@ const showMonsterScreen = (playerNumber, isFromMenu = false) => {
 
 // 스킬 생성 화면
 const showSkillScreen = (playerNumber, isFromMenu = false) => {
+    const player = gameState.players[playerNumber - 1];
+    const currentSkills = (isFromMenu && player && player.monster && player.monster.skills) ? player.monster.skills : [{}, {}, {}];
+
     const html = `
         <h2>플레이어 ${playerNumber} 스킬 설정</h2>
         <p>기본 스킬 3개의 이름을 정해주세요. (공격력: 0-5)</p>
-        <input type="text" id="skill1-name" placeholder="스킬 1 이름">
-        <input type="text" id="skill2-name" placeholder="스킬 2 이름">
-        <input type="text" id="skill3-name" placeholder="스킬 3 이름">
+        <input type="text" id="skill1-name" placeholder="스킬 1 이름" value="${currentSkills[0].name || ''}">
+        <input type="text" id="skill2-name" placeholder="스킬 2 이름" value="${currentSkills[1].name || ''}">
+        <input type="text" id="skill3-name" placeholder="스킬 3 이름" value="${currentSkills[2].name || ''}">
         <button id="save-skills-button">저장</button>
+        <button id="cancel-skills-button">취소</button>
     `;
     renderScreen(html);
+
+    document.getElementById('cancel-skills-button').addEventListener('click', () => {
+        if (isFromMenu) {
+            showMainMenu();
+        } else {
+            checkGameState();
+        }
+    });
 
     document.getElementById('save-skills-button').addEventListener('click', () => {
         const skill1Name = document.getElementById('skill1-name').value;
