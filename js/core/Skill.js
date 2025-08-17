@@ -6,11 +6,11 @@ export const EXPERIENCE_PER_DAMAGE_FACTOR = 5; // 데미지당 경험치 획득 
 export const SKILL_REQUIRED_EXP_BASE = 15; // 스킬 레벨업 필요 경험치 기본값
 
 export class Skill {
-    constructor(name, minAttack = DEFAULT_MIN_ATTACK, maxAttack = DEFAULT_MAX_ATTACK, soundPath = null) {
+    constructor(name, minAttack = DEFAULT_MIN_ATTACK, maxAttack = DEFAULT_MAX_ATTACK, level = 1, soundPath = null) {
         this.name = name;
         this.minAttack = minAttack;
         this.maxAttack = maxAttack;
-        this.level = 1;
+        this.level = level; // 레벨을 인자로 받아 설정
         this.soundPath = soundPath; // Add soundPath property
     }
 

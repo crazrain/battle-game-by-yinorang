@@ -461,7 +461,7 @@ const initGame = () => {
                     monster.hp = playerData.monster.hp;
                     if (playerData.monster.skills) {
                         monster.skills = playerData.monster.skills.map(skillData => 
-                            new Skill(skillData.name, skillData.minAttack, skillData.maxAttack, skillData.soundPath)
+                            new Skill(skillData.name, skillData.minAttack, skillData.maxAttack, skillData.level, skillData.soundPath)
                         );
                     }
                     player.monster = monster;
