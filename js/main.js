@@ -7,6 +7,33 @@ import { BattleSystem } from './core/BattleSystem.js';
 let gameState;
 let battleSystem;
 
+// 하드코딩된 스킬 사운드 파일 목록 (assets/audio/skill 폴더 기준)
+const skillSoundFiles = [
+    "skill/Download Free Hit Sound Effects.mp3",
+    "skill/Download Free Hit Sound Effects_2.mp3",
+    "skill/Download Free Hit Sound Effects_3.mp3",
+    "skill/Download Free Hit Sound Effects_4.mp3",
+    "skill/Download Free Hit Sound Effects_5.mp3",
+    "skill/Download Free Hit Sound Effects_6.mp3",
+    "skill/Download Free Hit Sound Effects_7.mp3",
+    "skill/Download Free Hit Sound Effects_8.mp3",
+    "skill/Download Free Hit Sound Effects_9.mp3",
+    "skill/Download Free Hit Sound Effects_10.mp3",
+    "skill/Download Free Hit Sound Effects_11.mp3",
+    "skill/Download Free Hit Sound Effects_12.mp3",
+    "skill/Download Free Hit Sound Effects_13.mp3",
+    "skill/Download Free Hit Sound Effects_14.mp3",
+    "skill/Download Free Hit Sound Effects_15.mp3"
+];
+
+// 랜덤 사운드 경로를 가져오는 헬퍼 함수
+const getRandomSoundPath = () => {
+    const randomIndex = Math.floor(Math.random() * skillSoundFiles.length);
+    const soundPath = `assets/audio/${skillSoundFiles[randomIndex]}`;
+    console.log('생성된 랜덤 사운드 경로:', soundPath);
+    return soundPath;
+};
+
 // 화면 렌더링을 관리할 함수
 const renderScreen = (html) => {
     const gameContainer = document.getElementById('game-container');
@@ -106,9 +133,9 @@ const showSkillScreen = (playerNumber, isFromMenu = false) => {
 
         if (skill1Name && skill2Name && skill3Name) {
             const skills = [
-                new Skill(skill1Name, 0, 5),
-                new Skill(skill2Name, 0, 5),
-                new Skill(skill3Name, 0, 5)
+                new Skill(skill1Name, 0, 5, getRandomSoundPath()),
+                new Skill(skill2Name, 0, 5, getRandomSoundPath()),
+                new Skill(skill3Name, 0, 5, getRandomSoundPath())
             ];
             gameState.players[playerNumber - 1].monster.skills = skills;
             gameState.saveState();
@@ -275,6 +302,21 @@ const addSkillButtonListeners = () => {
 
             if (playerNumber === currentPlayerNumber) {
                 const skill = battleSystem.currentPlayer.monster.skills[skillIndex];
+                // Play skill sound
+                if (skill.soundPath) {
+//                    console.log('스킬 사운드 경로:', skill.soundPath);
+                    const sound = new Audio(skill.soundPath);
+                    sound.volume = 0.5; // Set volume
+                    sound.play()
+                        .then(() => {
+                            console.log('스킬 사운드 재생 성공!');
+                        })
+                        .catch(error => {
+                            console.error('스킬 사운드 재생 실패:', error);
+                        });
+                } else {
+                    console.log('스킬 사운드 경로가 없습니다.');
+                }
                 battleSystem.attack(skill);
             }
         });
@@ -333,6 +375,7 @@ const checkGameState = () => {
 
 // 게임 초기화 및 시작
 const initGame = () => {
+    localStorage.removeItem('gameState'); // 저장된 게임 상태 초기화
     const loadedState = GameState.loadState();
     if (loadedState) {
         gameState = new GameState();
@@ -346,7 +389,7 @@ const initGame = () => {
                     monster.hp = playerData.monster.hp;
                     if (playerData.monster.skills) {
                         monster.skills = playerData.monster.skills.map(skillData => 
-                            new Skill(skillData.name, skillData.minAttack, skillData.maxAttack)
+                            new Skill(skillData.name, skillData.minAttack, skillData.maxAttack, skillData.soundPath)
                         );
                     }
                     player.monster = monster;

@@ -1,9 +1,10 @@
 export class Skill {
-    constructor(name, minAttack, maxAttack) {
+    constructor(name, minAttack, maxAttack, soundPath = null) {
         this.name = name;
         this.minAttack = minAttack;
         this.maxAttack = maxAttack;
         this.level = 1;
+        this.soundPath = soundPath; // Add soundPath property
     }
 
     // 다음 레벨업에 필요한 경험치
