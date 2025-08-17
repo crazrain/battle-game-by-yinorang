@@ -298,14 +298,14 @@ const updateBattleScreen = () => {
     overlay.offsetWidth;
 
     // 2) opacity만 트랜지션으로 처리 (width 트랜지션 금지)
-    overlay.style.transition = 'opacity 500ms ease-out';
+    overlay.style.transition = 'opacity 1s ease-out';
     overlay.style.opacity = 1;
 
     // 짧은 딜레이 후 페이드아웃 시작 (다음 프레임)
     overlay._fadeTimer = setTimeout(() => {
       overlay.style.opacity = 0;
       overlay._fadeTimer = null;
-    }, 50);
+    }, 1000);
 
     // opacity 트랜지션 끝날 때 HP 바 값을 커밋
     overlay.addEventListener(
