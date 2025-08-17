@@ -3,6 +3,7 @@ import { Player } from './core/Player.js';
 import { Monster } from './core/Monster.js';
 import { Skill, DEFAULT_MIN_ATTACK, DEFAULT_MAX_ATTACK } from './core/Skill.js';
 import { BattleSystem } from './core/BattleSystem.js';
+import { showConfirmationModal, showAlertModal } from './ui/modal.js';
 
 let gameState;
 let battleSystem;
@@ -427,70 +428,6 @@ const showGameOverScreen = (winner) => {
     document.getElementById('back-to-menu-button').addEventListener('click', () => {
         showMainMenu();
     });
-};
-
-// 확인 모달을 표시하는 함수
-const showConfirmationModal = (message, onConfirm) => {
-    const modalOverlay = document.createElement('div');
-    modalOverlay.className = 'modal-overlay';
-
-    const modalContent = document.createElement('div');
-    modalContent.className = 'modal-content';
-
-    const messageEl = document.createElement('p');
-    messageEl.textContent = message;
-
-    const confirmButton = document.createElement('button');
-    confirmButton.textContent = '확인';
-    confirmButton.className = 'modal-confirm-button';
-
-    const cancelButton = document.createElement('button');
-    cancelButton.textContent = '취소';
-    cancelButton.className = 'modal-cancel-button';
-
-    modalContent.appendChild(messageEl);
-    modalContent.appendChild(confirmButton);
-    modalContent.appendChild(cancelButton);
-    modalOverlay.appendChild(modalContent);
-    document.body.appendChild(modalOverlay);
-
-    const closeModal = () => {
-        document.body.removeChild(modalOverlay);
-    };
-
-    confirmButton.addEventListener('click', () => {
-        onConfirm();
-        closeModal();
-    });
-
-    cancelButton.addEventListener('click', closeModal);
-};
-
-// 알림 모달을 표시하는 함수
-const showAlertModal = (message) => {
-    const modalOverlay = document.createElement('div');
-    modalOverlay.className = 'modal-overlay';
-
-    const modalContent = document.createElement('div');
-    modalContent.className = 'modal-content';
-
-    const messageEl = document.createElement('p');
-    messageEl.textContent = message;
-
-    const confirmButton = document.createElement('button');
-    confirmButton.textContent = '확인';
-    confirmButton.className = 'modal-confirm-button';
-
-    modalContent.appendChild(messageEl);
-    modalContent.appendChild(confirmButton);
-    modalOverlay.appendChild(modalContent);
-    document.body.appendChild(modalOverlay);
-
-    const closeModal = () => {
-        document.body.removeChild(modalOverlay);
-    };
-
-    confirmButton.addEventListener('click', closeModal);
 };
 
 // 게임 상태를 확인하고 다음 단계로 진행
