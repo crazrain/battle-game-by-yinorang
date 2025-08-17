@@ -1,7 +1,7 @@
 import { GameState } from './core/GameState.js';
 import { Player } from './core/Player.js';
 import { Monster } from './core/Monster.js';
-import { Skill } from './core/Skill.js';
+import { Skill, DEFAULT_MIN_ATTACK, DEFAULT_MAX_ATTACK } from './core/Skill.js';
 import { BattleSystem } from './core/BattleSystem.js';
 
 let gameState;
@@ -129,7 +129,7 @@ const showSkillScreen = (playerNumber, isFromMenu = false) => {
 
     const html = `
         <h2>플레이어 ${playerNumber} 스킬 설정</h2>
-        <p>기본 스킬 3개의 이름을 정해주세요. (공격력: 0-5)</p>
+        <p>스킬 3개의 이름을 정해주세요.</p>
         <input type="text" id="skill1-name" placeholder="스킬 1 이름" value="${currentSkills[0].name || ''}">
         <input type="text" id="skill2-name" placeholder="스킬 2 이름" value="${currentSkills[1].name || ''}">
         <input type="text" id="skill3-name" placeholder="스킬 3 이름" value="${currentSkills[2].name || ''}">
@@ -211,7 +211,8 @@ const showMainMenu = () => {
             <button id="change-monster-button">몬스터 변경</button>
             <button id="change-skills-button">스킬 이름 변경</button>
             <hr>
-            <button id="start-battle-button">전투 시작</button>
+            <button id="start-battle-button" class="start-battle-button">전투 시작</button>
+            <button id="reset-exp-and-start-button" class="reset-exp-button">경험치 초기화 후 전투 시작</button>
         </div>
     `;
     renderScreen(html);
@@ -247,7 +248,7 @@ const showMainMenu = () => {
     });
 
     // 전투 시작 버튼 이벤트 리스너
-    document.getElementById('start-battle-button').addEventListener('click', () => {
+    const startBattleLogic = () => {
         const onAttack = (log) => {
             const logEl = document.getElementById('battle-log');
             logEl.innerText = log;
@@ -263,6 +264,28 @@ const showMainMenu = () => {
         battleSystem = new BattleSystem(gameState.players[0], gameState.players[1], onAttack, onTurnChange, onGameOver);
         battleSystem.startBattle();
         showBattleScreen();
+    };
+
+    document.getElementById('start-battle-button').addEventListener('click', startBattleLogic);
+
+    // 경험치 초기화 후 전투 시작 버튼 이벤트 리스너
+    document.getElementById('reset-exp-and-start-button').addEventListener('click', () => {
+        if (confirm('모든 플레이어의 경험치를 초기화하고 전투를 시작하시겠습니까?')) {
+            gameState.players.forEach(player => {
+                if (player) {
+                    player.experience = 0;
+                    if (player.monster && player.monster.skills) {
+                        player.monster.skills.forEach(skill => {
+                            skill.level = 1; // 스킬 레벨도 초기화
+                            skill.minAttack = DEFAULT_MIN_ATTACK; // 스킬 공격력도 초기화
+                            skill.maxAttack = DEFAULT_MAX_ATTACK;
+                        });
+                    }
+                }
+            });
+            gameState.saveState();
+            startBattleLogic(); // 경험치 초기화 후 전투 시작
+        }
     });
 };
 
@@ -360,7 +383,7 @@ const updateSkillButtons = () => {
 
 // 게임 종료 화면
 const showGameOverScreen = (winner) => {
-    winner.experience += 10; // 승자에게 경험치 지급
+    // 승패에 따른 고정 경험치 지급 로직 제거
     gameState.saveState();
 
     const html = `

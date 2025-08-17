@@ -54,10 +54,31 @@ button {
 }
 
 button:hover {
-    background: linear-gradient(180deg, #66BB6A, #4CAF50); /* Lighter green on hover */
-    transform: translateY(-2px); /* Slight lift effect */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+    background: linear-gradient(to bottom, #56c271, #4aa864);
 }
+
+.start-battle-button {
+    background: linear-gradient(to bottom, #007bff, #0056b3);
+    border-color: #0056b3;
+}
+
+.start-battle-button:hover {
+    background: linear-gradient(to bottom, #0056b3, #004085);
+}
+
+.reset-exp-button {
+    background: linear-gradient(to bottom, #d9534f, #c9302c);
+    border-color: #ac2925;
+}
+
+.reset-exp-button:hover {
+    background: linear-gradient(to bottom, #c9302c, #ac2925);
+}
+
+.hidden {
+    display: none;
+}
+
 
 button:active {
     transform: translateY(0);

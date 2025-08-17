@@ -1,3 +1,5 @@
+import { Skill, EXPERIENCE_PER_DAMAGE_FACTOR } from './Skill.js';
+
 export class BattleSystem {
     constructor(player1, player2, onAttack, onTurnChange, onGameOver) {
         this.player1 = player1;
@@ -30,6 +32,9 @@ export class BattleSystem {
         if (opponent.monster.hp < 0) {
             opponent.monster.hp = 0;
         }
+
+        // 입힌 데미지 만큼 경험치 획득
+        this.currentPlayer.experience += Math.floor(damage / EXPERIENCE_PER_DAMAGE_FACTOR);
 
         const logMessage = `${this.currentPlayer.nickname}이(가) ${skill.name}(으)로 ${damage}의 데미지를 입혔다!`;
         this.onAttack(logMessage); // 공격 로그 콜백 호출
