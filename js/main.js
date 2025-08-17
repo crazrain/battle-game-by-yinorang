@@ -4,6 +4,8 @@ import { Monster } from './core/Monster.js';
 import { Skill, DEFAULT_MIN_ATTACK, DEFAULT_MAX_ATTACK } from './core/Skill.js';
 import { BattleSystem } from './core/BattleSystem.js';
 import { showConfirmationModal, showAlertModal } from './ui/modal.js';
+import { renderScreen } from './ui/screenUtils.js';
+import { showStartScreen } from './ui/screens/startScreen.js';
 
 let gameState;
 let battleSystem;
@@ -28,25 +30,6 @@ const getRandomSoundPath = () => {
     const soundPath = `assets/audio/${skillSoundFiles[randomIndex]}`;
     console.log('생성된 랜덤 사운드 경로:', soundPath);
     return soundPath;
-};
-
-// 화면 렌더링을 관리할 함수
-const renderScreen = (html) => {
-    const gameContainer = document.getElementById('game-container');
-    gameContainer.innerHTML = html;
-};
-
-// 시작 화면을 렌더링하는 함수
-const showStartScreen = () => {
-    const html = `
-        <h1>몬스터 격투 게임</h1>
-        <button id="start-button">시작하기</button>
-    `;
-    renderScreen(html);
-
-    document.getElementById('start-button').addEventListener('click', () => {
-        checkGameState();
-    });
 };
 
 // 닉네임 생성 화면
@@ -475,7 +458,7 @@ const initGame = () => {
     } else {
         gameState = new GameState();
     }
-    showStartScreen();
+    showStartScreen(checkGameState);
 };
 
 // 페이지 로드 시 게임 초기화 함수 호출
