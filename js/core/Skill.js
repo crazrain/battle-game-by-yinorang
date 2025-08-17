@@ -13,7 +13,7 @@ export class Skill {
 
     // 다음 레벨업에 필요한 경험치
     get requiredExp() {
-        return this.level * 5;
+        return this.level * 10;
     }
 
     // 스킬 레벨업 로직

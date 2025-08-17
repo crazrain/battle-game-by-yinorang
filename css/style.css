@@ -174,8 +174,9 @@ hr {
     grid-template-areas:
         "p1-info . p2-info"
         "monster-area monster-area monster-area"
-        "skills-area skills-area skills-area"; /* 스킬 영역을 하나로 합침 */
-    grid-template-rows: auto 1fr auto;
+        "turn-message-area turn-message-area turn-message-area" /* 턴 표시를 위한 새로운 행 */
+        "skills-area skills-area skills-area";
+    grid-template-rows: auto 1fr auto auto;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
     gap: 10px; /* Gap between grid items */
@@ -295,10 +296,17 @@ progress::-moz-progress-bar {
 
 
 #turn-indicator {
-    grid-area: turn;
-    align-self: center;
+    grid-area: turn-message-area; /* 새로운 그리드 영역 지정 */
+    justify-self: center; /* 수평 중앙 정렬 */
+    align-self: center; /* 수직 중앙 정렬 (필요 시) */
     font-size: 22px; /* Larger turn indicator */
     color: #FFD700;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    animation: blink 0.5s infinite alternate; /* 깜빡이는 애니메이션 2배 빠르게 적용 */
+}
+
+@keyframes blink {
+    from { opacity: 1; }
+    to { opacity: 0.3; }
 }
 
