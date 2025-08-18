@@ -31,6 +31,34 @@ const handleBattleClick = (e) => {
     }
 };
 
+// 데미지 텍스트 애니메이션 표시
+const showDamage = (damage, opponent) => {
+    const monsterArea = document.querySelector('.monster-area');
+    if (!monsterArea) return;
+
+    const damageText = document.createElement('div');
+    damageText.className = 'damage-text';
+    damageText.textContent = `-${damage}`;
+
+    // 피격자 몬스터 이미지 위치 기준으로 데미지 텍스트 위치 설정
+    const opponentMonsterImg = opponent === battleSystem.player1 ? document.getElementById('p1-monster') : document.getElementById('p2-monster');
+    if (opponentMonsterImg) {
+        const rect = opponentMonsterImg.getBoundingClientRect();
+        const containerRect = monsterArea.getBoundingClientRect();
+        damageText.style.left = `${rect.left - containerRect.left + rect.width / 2}px`;
+        damageText.style.top = `${rect.top - containerRect.top}px`;
+    }
+
+
+    monsterArea.appendChild(damageText);
+
+    // 애니메이션이 끝나면 요소 제거
+    damageText.addEventListener('animationend', () => {
+        damageText.remove();
+    });
+};
+
+
 // 전투 화면 정보 업데이트
 const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
 
@@ -203,9 +231,10 @@ export const showBattleScreen = (bs, sounds, backToMenuCallback) => {
         eventListenerAttached = true;
     }
 
-    battleSystem.onAttack = (log) => {
+    battleSystem.onAttack = (log, damage, opponent) => {
         const logEl = document.getElementById('battle-log');
         if (logEl) logEl.innerText = log;
+        showDamage(damage, opponent);
         updateBattleScreen();
     };
     battleSystem.onTurnChange = () => {

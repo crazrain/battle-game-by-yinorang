@@ -280,6 +280,7 @@ progress::-moz-progress-bar {
     justify-content: space-around;
     align-items: center;
     padding: 20px 0;
+    position: relative; /* For damage text positioning */
 }
 .monster {
     max-width: 250px; /* Slightly larger monsters */
@@ -447,4 +448,26 @@ progress::-moz-progress-bar {
     font-weight: bold;
     color: #4CAF50; /* Green for the numbers */
     margin-left: 10px;
+}
+
+/* Damage text animation */
+@keyframes float-up {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+}
+
+.damage-text {
+    position: absolute;
+    font-size: 24px;
+    font-weight: bold;
+    color: red;
+    text-shadow: 1px 1px #000;
+    animation: float-up 1s ease-out forwards;
+    pointer-events: none; /* So it doesn't interfere with clicks */
 }
