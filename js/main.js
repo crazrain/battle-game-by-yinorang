@@ -7,8 +7,8 @@ import { showStartScreen } from './ui/screens/startScreen.js';
 import { showNicknameScreen } from './ui/screens/nicknameScreen.js';
 import { showMonsterScreen } from './ui/screens/monsterScreen.js';
 import { showSkillScreen } from './ui/screens/skillScreen.js';
-import { showMainMenu } from './ui/screens/mainMenuScreen.js';
-import { showBattleScreen } from './ui/screens/battleScreen.js';
+import { showMainMenu, removeMainMenuListener } from './ui/screens/mainMenuScreen.js';
+import { showBattleScreen, removeBattleScreenListener } from './ui/screens/battleScreen.js';
 
 let gameState;
 let battleSystem;
@@ -27,11 +27,19 @@ const skillSoundFiles = [
     "skill/s0010.mp3"
 ];
 
+const backToMenu = () => {
+    removeBattleScreenListener();
+    showMainMenu(gameState, battleSystemCallbacks);
+}
+
 // 전투 시작 로직
 const startBattleLogic = () => {
+    // 전투 시작 시 mainMenu의 이벤트 리스너 제거
+    removeMainMenuListener();
+
     battleSystem = new BattleSystem(gameState.players[0], gameState.players[1]);
     battleSystem.startBattle();
-    showBattleScreen(battleSystem, skillSoundFiles, () => showMainMenu(gameState, battleSystemCallbacks));
+    showBattleScreen(battleSystem, skillSoundFiles, backToMenu);
 };
 
 // mainMenuScreen으로 전달할 콜백 객체
@@ -95,7 +103,7 @@ const initGame = () => {
                     const monster = new Monster(playerData.monster.imageBase64);
                     monster.hp = playerData.monster.hp;
                     if (playerData.monster.skills) {
-                        monster.skills = playerData.monster.skills.map(skillData => 
+                        monster.skills = playerData.monster.skills.map(skillData =>
                             new Skill(skillData.name, skillData.minAttack, skillData.maxAttack, skillData.level, skillData.soundPath)
                         );
                     }

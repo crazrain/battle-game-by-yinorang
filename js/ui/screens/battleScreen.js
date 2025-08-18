@@ -2,14 +2,41 @@ import { renderScreen } from '../screenUtils.js';
 import { getRandomSoundPath } from './skillScreen.js';
 
 let battleSystem;
-let previousP1Hp = 100;
-let previousP2Hp = 100;
+let skillSoundFiles;
 let onBackToMenu;
+let eventListenerAttached = false;
+let previousP1Hp;
+let previousP2Hp;
+
+const handleBattleClick = (e) => {
+    const target = e.target;
+
+    if (target.classList.contains('skill-button')) {
+        const playerNumber = parseInt(target.dataset.player);
+        const skillIndex = parseInt(target.dataset.skillIndex);
+        const currentPlayerNumber = battleSystem.currentPlayer === battleSystem.player1 ? 1 : 2;
+
+        if (playerNumber === currentPlayerNumber) {
+            const skill = battleSystem.currentPlayer.monster.skills[skillIndex];
+            const soundPathToPlay = getRandomSoundPath(skillSoundFiles);
+            if (soundPathToPlay) {
+                const sound = new Audio(soundPathToPlay);
+                sound.volume = 0.5;
+                sound.play().catch(error => console.error('스킬 사운드 재생 실패:', error));
+            }
+            battleSystem.attack(skill);
+        }
+    } else if (target.id === 'back-to-menu-button') {
+        onBackToMenu();
+    }
+};
 
 // 전투 화면 정보 업데이트
 const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
 
 const updateBattleScreen = () => {
+    if (!battleSystem) return;
+
     const players = [
         {
             monster: battleSystem.player1.monster,
@@ -28,6 +55,7 @@ const updateBattleScreen = () => {
     ];
 
     const applyDamageOverlay = ({ monster, prevHp, hpBar, overlay, setPrevHp }) => {
+        if (!hpBar || !overlay) return;
         const maxHp = monster.maxHp ?? 100;
         const curr = clamp(monster.hp, 0, maxHp);
         const prev = clamp(prevHp ?? maxHp, 0, maxHp);
@@ -48,7 +76,6 @@ const updateBattleScreen = () => {
         const damagePct = ((prev - curr) / maxHp) * 100;
         const prevPct = (prev / maxHp) * 100;
 
-        const oldTransition = overlay.style.transition;
         overlay.style.transition = 'none';
         overlay.style.opacity = 0;
         overlay.style.width = `${Math.max(0, damagePct)}%`;
@@ -81,15 +108,20 @@ const updateBattleScreen = () => {
 
     players.forEach(applyDamageOverlay);
 
-    document.getElementById('turn-indicator').innerText =
-        `${battleSystem.currentPlayer.nickname}의 턴`;
+    const turnIndicator = document.getElementById('turn-indicator');
+    if (turnIndicator) {
+        turnIndicator.innerText = `${battleSystem.currentPlayer.nickname}의 턴`;
+    }
     updateSkillButtons();
 };
 
 // 현재 턴에 따라 스킬 버튼 활성화/비활성화
 const updateSkillButtons = () => {
+    if (!battleSystem) return;
     const p1_skills = document.querySelectorAll('#p1-skills .skill-button');
     const p2_skills = document.querySelectorAll('#p2-skills .skill-button');
+
+    if (!p1_skills.length || !p2_skills.length) return;
 
     if (battleSystem.currentPlayer === battleSystem.player1) {
         p1_skills.forEach(b => b.disabled = false);
@@ -98,28 +130,6 @@ const updateSkillButtons = () => {
         p1_skills.forEach(b => b.disabled = true);
         p2_skills.forEach(b => b.disabled = false);
     }
-};
-
-// 스킬 버튼 이벤트 리스너 추가
-const addSkillButtonListeners = (skillSoundFiles) => {
-    document.querySelectorAll('.skill-button').forEach(button => {
-        button.addEventListener('click', (e) => {
-            const playerNumber = parseInt(e.target.dataset.player);
-            const skillIndex = parseInt(e.target.dataset.skillIndex);
-            const currentPlayerNumber = battleSystem.currentPlayer === battleSystem.player1 ? 1 : 2;
-
-            if (playerNumber === currentPlayerNumber) {
-                const skill = battleSystem.currentPlayer.monster.skills[skillIndex];
-                const soundPathToPlay = getRandomSoundPath(skillSoundFiles);
-                if (soundPathToPlay) {
-                    const sound = new Audio(soundPathToPlay);
-                    sound.volume = 0.5;
-                    sound.play().catch(error => console.error('스킬 사운드 재생 실패:', error));
-                }
-                battleSystem.attack(skill);
-            }
-        });
-    });
 };
 
 // 게임 종료 화면
@@ -134,17 +144,9 @@ const showGameOverScreen = (winner) => {
         <button id="back-to-menu-button">전투 준비 화면으로 돌아가기</button>
     `;
     renderScreen(html);
-
-    document.getElementById('back-to-menu-button').addEventListener('click', onBackToMenu);
 };
 
-// 전투 화면 렌더링
-export const showBattleScreen = (bs, skillSoundFiles, backToMenuCallback) => {
-    battleSystem = bs;
-    onBackToMenu = backToMenuCallback;
-    previousP1Hp = battleSystem.player1.monster.maxHp ?? 100;
-    previousP2Hp = battleSystem.player2.monster.maxHp ?? 100;
-
+const renderBattleScreen = () => {
     const p1 = battleSystem.player1;
     const p2 = battleSystem.player2;
 
@@ -183,13 +185,27 @@ export const showBattleScreen = (bs, skillSoundFiles, backToMenuCallback) => {
         </div>
     `;
     renderScreen(html);
-    addSkillButtonListeners(skillSoundFiles);
     updateBattleScreen();
+}
 
-    // BattleSystem 콜백 설정
+export const showBattleScreen = (bs, sounds, backToMenuCallback) => {
+    battleSystem = bs;
+    skillSoundFiles = sounds;
+    onBackToMenu = backToMenuCallback;
+    previousP1Hp = battleSystem.player1.monster.maxHp ?? 100;
+    previousP2Hp = battleSystem.player2.monster.maxHp ?? 100;
+
+    renderBattleScreen();
+
+    if (!eventListenerAttached) {
+        const gameContainer = document.getElementById('game-container');
+        gameContainer.addEventListener('click', handleBattleClick);
+        eventListenerAttached = true;
+    }
+
     battleSystem.onAttack = (log) => {
         const logEl = document.getElementById('battle-log');
-        if(logEl) logEl.innerText = log;
+        if (logEl) logEl.innerText = log;
         updateBattleScreen();
     };
     battleSystem.onTurnChange = () => {
@@ -198,4 +214,12 @@ export const showBattleScreen = (bs, skillSoundFiles, backToMenuCallback) => {
     battleSystem.onGameOver = (winner) => {
         showGameOverScreen(winner);
     };
+};
+
+export const removeBattleScreenListener = () => {
+    if (eventListenerAttached) {
+        const gameContainer = document.getElementById('game-container');
+        gameContainer.removeEventListener('click', handleBattleClick);
+        eventListenerAttached = false;
+    }
 };
