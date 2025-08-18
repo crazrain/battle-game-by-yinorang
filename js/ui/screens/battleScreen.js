@@ -11,7 +11,7 @@ let previousP2Hp;
 const handleBattleClick = (e) => {
     const target = e.target;
 
-    if (target.classList.contains('skill-button')) {
+    if (target.classList.contains('skill-button') && !target.disabled) {
         const playerNumber = parseInt(target.dataset.player);
         const skillIndex = parseInt(target.dataset.skillIndex);
         const currentPlayerNumber = battleSystem.currentPlayer === battleSystem.player1 ? 1 : 2;
@@ -24,7 +24,22 @@ const handleBattleClick = (e) => {
                 sound.volume = 0.5;
                 sound.play().catch(error => console.error('스킬 사운드 재생 실패:', error));
             }
-            battleSystem.attack(skill);
+
+            // 애니메이션 적용
+            const attackerMonsterImg = battleSystem.currentPlayer === battleSystem.player1 ? document.getElementById('p1-monster') : document.getElementById('p2-monster');
+            const opponentMonsterImg = battleSystem.currentPlayer === battleSystem.player1 ? document.getElementById('p2-monster') : document.getElementById('p1-monster');
+
+            const lungeClass = battleSystem.currentPlayer === battleSystem.player1 ? 'lunge' : 'lunge-reversed';
+            const shakeClass = battleSystem.currentPlayer === battleSystem.player1 ? 'shake' : 'shake-normal';
+
+            attackerMonsterImg.classList.add(lungeClass);
+            opponentMonsterImg.classList.add(shakeClass);
+
+            setTimeout(() => {
+                attackerMonsterImg.classList.remove(lungeClass);
+                opponentMonsterImg.classList.remove(shakeClass);
+                battleSystem.attack(skill);
+            }, 500); // 애니메이션 시간과 동일하게 설정
         }
     } else if (target.id === 'back-to-menu-button') {
         onBackToMenu();
