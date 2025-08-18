@@ -12,7 +12,7 @@
 
 ## 실행 방법
 
-`index.html` 파일을 웹 브라우저에서 열면 바로 게임을 시작할 수 있습니다.
+`npx serve` 를 실행한 후 출력되는 주소를 브라우저에 입력하세요. (ex: http://localhost:3000)
 
 ## GitHub Pages 배포
 
