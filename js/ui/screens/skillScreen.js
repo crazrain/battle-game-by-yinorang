@@ -31,9 +31,9 @@ export const showSkillScreen = (playerNumber, currentSkills, skillSoundFiles, on
 
         if (skill1Name && skill2Name && skill3Name) {
             const skills = [
-                new Skill(skill1Name, undefined, undefined, getRandomSoundPath(skillSoundFiles)),
-                new Skill(skill2Name, undefined, undefined, getRandomSoundPath(skillSoundFiles)),
-                new Skill(skill3Name, undefined, undefined, getRandomSoundPath(skillSoundFiles))
+                new Skill(skill1Name, undefined, undefined, 1, getRandomSoundPath(skillSoundFiles)),
+                new Skill(skill2Name, undefined, undefined, 1, getRandomSoundPath(skillSoundFiles)),
+                new Skill(skill3Name, undefined, undefined, 1, getRandomSoundPath(skillSoundFiles))
             ];
             onSave(skills);
         } else {
