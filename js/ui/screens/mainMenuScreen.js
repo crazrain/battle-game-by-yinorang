@@ -108,7 +108,7 @@ const renderMainMenu = () => {
         if (!player) return `<div><h2>플레이어 ${playerNumber}</h2><p>설정 필요</p></div>`;
         return `
             <div class="player-summary ${selectedPlayerIndex === playerNumber - 1 ? 'selected' : ''}" data-player-index="${playerNumber - 1}">
-                <h2>플레이어 ${playerNumber}: ${player.nickname} (경험치: ${player.experience})</h2>
+                <h2>${player.nickname} (경험치: ${player.experience})</h2>
                 <p>승리: ${player.winCount} | 연승: ${player.winningStreak}</p>
                 <img src="${player.monster.imageBase64}" width="100">
                 <div>
