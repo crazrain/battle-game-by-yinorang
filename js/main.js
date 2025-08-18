@@ -17,16 +17,16 @@ let previousP2Hp = 100; // Player 2의 이전 HP
 
 // 하드코딩된 스킬 사운드 파일 목록 (assets/audio/skill 폴더 기준)
 const skillSoundFiles = [
-    "skill/Chamelot_Delvigne_Model_1873_11_mm_Revolver_Single_Shot_07.mp3",
-    "skill/gun_grenade_launcher_shot_02.mp3",
-    "skill/HK53_Shot-01.mp3",
-    "skill/HK53_Shot-02.mp3",
-    "skill/Kalashnikov_AK_47_762_X_39_mm_Automatic_Rifle_Single_Shot_03.mp3",
-    "skill/L96A1_Shot-04.mp3",
-    "skill/Model 700_Shot-01.mp3",
-    "skill/Smith_Wesson_Chief_Special_38_Special_Revolver_Single_Shot_1_01.mp3",
-    "skill/tank_shot_1.mp3",
-        "skill/Uzi_Shot-03.mp3"
+    "skill/s0001.mp3",
+    "skill/s0002.mp3",
+    "skill/s0003.mp3",
+    "skill/s0004.mp3",
+    "skill/s0005.mp3",
+    "skill/s0006.mp3",
+    "skill/s0007.mp3",
+    "skill/s0008.mp3",
+    "skill/s0009.mp3",
+    "skill/s0010.mp3"
 ];
 
 // 닉네임 변경 화면 (메인 메뉴에서 호출)
