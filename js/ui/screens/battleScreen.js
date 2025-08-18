@@ -231,7 +231,7 @@ const renderBattleScreen = () => {
     updateBattleScreen();
 }
 
-export const showBattleScreen = (bs, sounds, backToMenuCallback) => {
+export const showBattleScreen = (bs, sounds, backToMenuCallback, gs) => {
     battleSystem = bs;
     skillSoundFiles = sounds;
     onBackToMenu = backToMenuCallback;
@@ -257,6 +257,7 @@ export const showBattleScreen = (bs, sounds, backToMenuCallback) => {
     };
     battleSystem.onGameOver = (winner) => {
         showGameOverScreen(winner);
+        gs.saveState(); // 게임 종료 시 gameState 저장
     };
 };
 

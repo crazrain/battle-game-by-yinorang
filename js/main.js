@@ -39,13 +39,14 @@ const startBattleLogic = () => {
 
     battleSystem = new BattleSystem(gameState.players[0], gameState.players[1]);
     battleSystem.startBattle();
-    showBattleScreen(battleSystem, skillSoundFiles, backToMenu);
+    showBattleScreen(battleSystem, skillSoundFiles, backToMenu, gameState);
 };
 
 // mainMenuScreen으로 전달할 콜백 객체
 const battleSystemCallbacks = {
     startBattleLogic,
-    skillSoundFiles
+    skillSoundFiles,
+    gameState // gameState 추가
 };
 
 // 게임 상태를 확인하고 다음 단계로 진행
@@ -96,7 +97,7 @@ const initGame = () => {
         loadedState.players.forEach((playerData, index) => {
             if (playerData) {
                 const player = new Player(playerData.nickname);
-                player.experience = playerData.experience;
+                player.experience = playerData.experience || 0;
                 player.winCount = playerData.winCount || 0; // 승리 횟수 복원
                 player.winningStreak = playerData.winningStreak || 0; // 연승수 복원
                 if (playerData.monster) {
