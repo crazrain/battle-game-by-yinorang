@@ -8,13 +8,24 @@ import { Monster } from '../../core/Monster.js';
 let selectedPlayerIndex = 0; // 0 for player 1, 1 for player 2
 let gameState;
 let battleSystemCallbacks;
-let eventListenerAttached = false;
 
 const handleMenuClick = (e) => {
     const target = e.target;
     const selectedPlayer = gameState.players[selectedPlayerIndex];
 
-    if (target.closest('.player-summary')) {
+    const upgradeButton = target.closest('.upgrade-skill-button');
+
+    if (upgradeButton) {
+        const skillIndex = parseInt(upgradeButton.dataset.skillIndex);
+        const skill = selectedPlayer.monster.skills[skillIndex];
+
+        if (selectedPlayer.experience >= skill.requiredExp) {
+            selectedPlayer.experience -= skill.requiredExp;
+            skill.levelUp();
+            gameState.saveState();
+            renderMainMenu();
+        }
+    } else if (target.closest('.player-summary')) {
         selectedPlayerIndex = parseInt(target.closest('.player-summary').dataset.playerIndex);
         renderMainMenu();
     } else if (target.id === 'change-player-name-button') {
@@ -39,18 +50,10 @@ const handleMenuClick = (e) => {
             gameState.saveState();
             showMainMenu(gameState, battleSystemCallbacks);
         }, () => showMainMenu(gameState, battleSystemCallbacks));
-    } else if (target.classList.contains('upgrade-skill-button')) {
-        const skillIndex = parseInt(target.dataset.skillIndex);
-        const skill = selectedPlayer.monster.skills[skillIndex];
-        if (selectedPlayer.experience >= skill.requiredExp) {
-            selectedPlayer.experience -= skill.requiredExp;
-            skill.levelUp();
-            gameState.saveState();
-            renderMainMenu();
-        }
     } else if (target.id === 'start-battle-button') {
         battleSystemCallbacks.startBattleLogic();
-    } else if (target.id === 'reset-exp-button') {
+    }
+    else if (target.id === 'reset-exp-button') {
         showConfirmationModal('(주의) 전투와 관련된 모든 정보가 초기화 됩니다!', () => {
             gameState.players.forEach(player => {
                 if (player) {
@@ -151,17 +154,11 @@ export const showMainMenu = (gs, callbacks) => {
 
     renderMainMenu();
 
-    if (!eventListenerAttached) {
-        const gameContainer = document.getElementById('game-container');
-        gameContainer.addEventListener('click', handleMenuClick);
-        eventListenerAttached = true;
-    }
+    const gameContainer = document.getElementById('game-container');
+    // 기존 리스너가 있다면 제거 (중복 연결 방지)
+    gameContainer.removeEventListener('click', handleMenuClick);
+    // 새로운 리스너 연결
+    gameContainer.addEventListener('click', handleMenuClick);
 };
 
-export const removeMainMenuListener = () => {
-    if (eventListenerAttached) {
-        const gameContainer = document.getElementById('game-container');
-        gameContainer.removeEventListener('click', handleMenuClick);
-        eventListenerAttached = false;
-    }
-};
+

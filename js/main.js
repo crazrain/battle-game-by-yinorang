@@ -7,7 +7,7 @@ import { showStartScreen } from './ui/screens/startScreen.js';
 import { showNicknameScreen } from './ui/screens/nicknameScreen.js';
 import { showMonsterScreen } from './ui/screens/monsterScreen.js';
 import { showSkillScreen } from './ui/screens/skillScreen.js';
-import { showMainMenu, removeMainMenuListener } from './ui/screens/mainMenuScreen.js';
+import { showMainMenu } from './ui/screens/mainMenuScreen.js';
 import { showBattleScreen, removeBattleScreenListener } from './ui/screens/battleScreen.js';
 
 let gameState;
@@ -35,7 +35,7 @@ const backToMenu = () => {
 // 전투 시작 로직
 const startBattleLogic = () => {
     // 전투 시작 시 mainMenu의 이벤트 리스너 제거
-    removeMainMenuListener();
+    
 
     battleSystem = new BattleSystem(gameState.players[0], gameState.players[1]);
     battleSystem.startBattle();
