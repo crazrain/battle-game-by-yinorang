@@ -13,15 +13,23 @@ const handleMenuClick = (e) => {
     const target = e.target;
     const selectedPlayer = gameState.players[selectedPlayerIndex];
 
-    const upgradeButton = target.closest('.upgrade-skill-button');
+    const upgradeButton = target.closest('.upgrade-skill-button, .upgrade-hp-button');
 
-    if (upgradeButton) {
+    if (upgradeButton && upgradeButton.dataset.type === 'skill') {
         const skillIndex = parseInt(upgradeButton.dataset.skillIndex);
         const skill = selectedPlayer.monster.skills[skillIndex];
 
         if (selectedPlayer.experience >= skill.requiredExp) {
             selectedPlayer.experience -= skill.requiredExp;
             skill.levelUp();
+            gameState.saveState();
+            renderMainMenu();
+        }
+    } else if (upgradeButton && upgradeButton.dataset.type === 'hp') {
+        const monster = selectedPlayer.monster;
+        if (selectedPlayer.experience >= monster.requiredHpExp) {
+            selectedPlayer.experience -= monster.requiredHpExp;
+            monster.levelUpHp();
             gameState.saveState();
             renderMainMenu();
         }
@@ -119,11 +127,18 @@ const renderMainMenu = () => {
                         <div class="skill-info">
                             <span>${skill.name} (Lv.${skill.level}) | ${skill.minAttack}~${skill.maxAttack}</span>
                             ${selectedPlayerIndex === playerNumber - 1 ?
-                                `<button class="upgrade-skill-button" data-skill-index="${index}" ${player.experience < skill.requiredExp ? 'disabled' : ''}>
+                                `<button class="upgrade-skill-button" data-type="skill" data-skill-index="${index}" ${player.experience < skill.requiredExp ? 'disabled' : ''}>
                                     업그레이드 (${skill.requiredExp} EXP)
                                  </button>` : ''}
                         </div>
                     `).join('')}
+                    <div class="skill-info">
+                        <span>체력 (Lv.${player.monster.hpLevel}) | ${player.monster.maxHp} HP</span>
+                        ${selectedPlayerIndex === playerNumber - 1 ?
+                            `<button class="upgrade-hp-button" ${player.experience < player.monster.requiredHpExp ? 'disabled' : ''}>
+                                체력 업그레이드 (${player.monster.requiredHpExp} EXP)
+                             </button>` : ''}
+                    </div>
                 </div>
             </div>
         `;

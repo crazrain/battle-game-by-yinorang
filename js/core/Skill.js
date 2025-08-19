@@ -2,6 +2,11 @@ export const DEFAULT_MIN_ATTACK = 5;
 export const DEFAULT_MAX_ATTACK = 20;
 export const ATTACK_INCREASE_PER_LEVEL = 5; // 레벨당 공격력 증가량 조정
 
+export const BASE_MONSTER_HP = 70; // 몬스터 기본 체력 (hpLevel 1일 때 70)
+export const HP_INCREASE_PER_LEVEL = 30; // 레벨당 체력 증가량
+export const HP_UPGRADE_REQUIRED_EXP_BASE = 10; // 체력 레벨업 필요 경험치 기본값
+export const EXPERIENCE_REDUCTION_PER_HP_LEVEL_FACTOR = 0.1; // 상대방 HP 레벨당 경험치 감소 계수
+
 export const EXPERIENCE_PER_DAMAGE_FACTOR = 5; // 데미지당 경험치 획득 비율 (데미지 / 이 값)
 export const SKILL_REQUIRED_EXP_BASE = 15; // 스킬 레벨업 필요 경험치 기본값
 
@@ -26,3 +31,4 @@ export class Skill {
         this.maxAttack += ATTACK_INCREASE_PER_LEVEL;
     }
 }
+

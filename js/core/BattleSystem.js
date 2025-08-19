@@ -1,4 +1,4 @@
-import { Skill, EXPERIENCE_PER_DAMAGE_FACTOR } from './Skill.js';
+import { Skill, EXPERIENCE_PER_DAMAGE_FACTOR, EXPERIENCE_REDUCTION_PER_HP_LEVEL_FACTOR } from './Skill.js';
 
 export class BattleSystem {
     constructor(player1, player2, onAttack, onTurnChange, onGameOver) {
@@ -13,8 +13,8 @@ export class BattleSystem {
 
     // 전투 시작
     startBattle() {
-        this.player1.monster.hp = 100; // 전투 시작 시 HP 초기화
-        this.player2.monster.hp = 100;
+        this.player1.monster.hp = this.player1.monster.maxHp; // 전투 시작 시 HP 초기화
+        this.player2.monster.hp = this.player2.monster.maxHp;
         this.currentPlayer = Math.random() < 0.5 ? this.player1 : this.player2;
         this.isGameOver = false; // 게임 시작 시 플래그 초기화
     }
@@ -35,8 +35,10 @@ export class BattleSystem {
             opponent.monster.hp = 0;
         }
 
-        // 입힌 데미지 만큼 경험치 획득
-        this.currentPlayer.experience += Math.floor(damage / EXPERIENCE_PER_DAMAGE_FACTOR);
+        // 상대방 HP 레벨에 따른 경험치 감소 계수 적용
+        const expReductionFactor = 1 + (opponent.monster.hpLevel - 1) * EXPERIENCE_REDUCTION_PER_HP_LEVEL_FACTOR;
+        const actualExperienceGain = Math.floor(damage / (EXPERIENCE_PER_DAMAGE_FACTOR * expReductionFactor));
+        this.currentPlayer.experience += actualExperienceGain;
 
         const logMessage = `${this.currentPlayer.nickname}이(가) ${skill.name}(을)를 사용하였다!<span class="damage-number-in-log">-${damage}</span>`;
         this.onAttack(logMessage, damage, opponent); // 공격 로그, 데미지, 피격자 정보를 콜백으로 전달

@@ -166,7 +166,7 @@ input[type="text"]:focus, input[type="file"]:focus {
     border-radius: 3px;
     border: 1px solid #333;
 }
-.upgrade-skill-button {
+.upgrade-skill-button, .upgrade-hp-button {
     padding: 2px 5px; /* Reduced padding */
     font-size: 12px;
     margin: 0; /* Override general button margin */
@@ -174,7 +174,7 @@ input[type="text"]:focus, input[type="file"]:focus {
     border-color: #FF4500;
     box-shadow: none;
 }
-.upgrade-skill-button:hover {
+.upgrade-skill-button:hover, .upgrade-hp-button:hover {
     background: linear-gradient(180deg, #FFB08A, #FFA07A);
     transform: none;
     box-shadow: none;
