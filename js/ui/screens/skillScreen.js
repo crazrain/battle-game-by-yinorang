@@ -1,6 +1,7 @@
 import { renderScreen } from '../screenUtils.js';
 import { showAlertModal } from '../modal.js';
 import { Skill } from '../../core/Skill.js';
+import { playClickSound } from '../../utils/audioUtils.js';
 
 export const getRandomSoundPath = (skillSoundFiles) => {
     const randomIndex = Math.floor(Math.random() * skillSoundFiles.length);
@@ -21,9 +22,13 @@ export const showSkillScreen = (playerNumber, currentSkills, skillSoundFiles, on
     `;
     renderScreen(html);
 
-    document.getElementById('cancel-skills-button').addEventListener('click', onCancel);
+    document.getElementById('cancel-skills-button').addEventListener('click', () => {
+        playClickSound();
+        onCancel();
+    });
 
     document.getElementById('save-skills-button').addEventListener('click', () => {
+        playClickSound();
         const skill1Name = document.getElementById('skill1-name').value;
         const skill2Name = document.getElementById('skill2-name').value;
         const skill3Name = document.getElementById('skill3-name').value;

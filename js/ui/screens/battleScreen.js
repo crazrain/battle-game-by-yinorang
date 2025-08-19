@@ -1,5 +1,6 @@
 import { renderScreen } from '../screenUtils.js';
 import { getRandomSoundPath } from './skillScreen.js';
+import { playClickSound } from '../../utils/audioUtils.js';
 
 let battleSystem;
 let skillSoundFiles;
@@ -12,6 +13,7 @@ const handleBattleClick = (e) => {
     const target = e.target;
 
     if (target.classList.contains('skill-button') && !target.disabled) {
+        // 스킬 버튼은 클릭 사운드 제외
         // 모든 스킬 버튼 비활성화
         document.querySelectorAll('.skill-button').forEach(button => button.disabled = true);
 
@@ -45,6 +47,7 @@ const handleBattleClick = (e) => {
             }, 500); // 애니메이션 시간과 동일하게 설정
         }
     } else if (target.id === 'back-to-menu-button') {
+        playClickSound(); // 클릭 사운드 재생
         onBackToMenu();
     }
 };

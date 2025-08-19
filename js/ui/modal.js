@@ -30,13 +30,13 @@ export const showConfirmationModal = (message, onConfirm) => {
     };
 
     confirmButton.addEventListener('click', () => {
-        playClickSound(); // 클릭 사운드 재생
+        playClickSound();
         onConfirm();
         closeModal();
     });
 
     cancelButton.addEventListener('click', () => {
-        playClickSound(); // 클릭 사운드 재생
+        playClickSound();
         closeModal();
     });
 };
@@ -66,7 +66,7 @@ export const showAlertModal = (message) => {
     };
 
     confirmButton.addEventListener('click', () => {
-        playClickSound(); // 클릭 사운드 재생
+        playClickSound();
         closeModal();
     });
 };

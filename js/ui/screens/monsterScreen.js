@@ -1,5 +1,6 @@
 import { renderScreen } from '../screenUtils.js';
 import { showAlertModal } from '../modal.js';
+import { playClickSound } from '../../utils/audioUtils.js';
 
 // 몬스터 생성 화면
 export const showMonsterScreen = (playerNumber, currentMonsterImageBase64, onSave, onCancel) => {
@@ -58,9 +59,13 @@ export const showMonsterScreen = (playerNumber, currentMonsterImageBase64, onSav
         }
     });
 
-    document.getElementById('cancel-monster-button').addEventListener('click', onCancel);
+    document.getElementById('cancel-monster-button').addEventListener('click', () => {
+        playClickSound();
+        onCancel();
+    });
 
     document.getElementById('save-monster-button').addEventListener('click', () => {
+        playClickSound();
         const input = document.getElementById('monster-image-input');
         if (input.files && input.files[0]) {
             const reader = new FileReader();
