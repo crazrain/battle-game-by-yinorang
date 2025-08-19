@@ -1,3 +1,5 @@
+import { playClickSound } from '../utils/audioUtils.js';
+
 // 확인 모달을 표시하는 함수
 export const showConfirmationModal = (message, onConfirm) => {
     const modalOverlay = document.createElement('div');
@@ -28,11 +30,15 @@ export const showConfirmationModal = (message, onConfirm) => {
     };
 
     confirmButton.addEventListener('click', () => {
+        playClickSound(); // 클릭 사운드 재생
         onConfirm();
         closeModal();
     });
 
-    cancelButton.addEventListener('click', closeModal);
+    cancelButton.addEventListener('click', () => {
+        playClickSound(); // 클릭 사운드 재생
+        closeModal();
+    });
 };
 
 // 알림 모달을 표시하는 함수
@@ -59,5 +65,8 @@ export const showAlertModal = (message) => {
         document.body.removeChild(modalOverlay);
     };
 
-    confirmButton.addEventListener('click', closeModal);
+    confirmButton.addEventListener('click', () => {
+        playClickSound(); // 클릭 사운드 재생
+        closeModal();
+    });
 };
