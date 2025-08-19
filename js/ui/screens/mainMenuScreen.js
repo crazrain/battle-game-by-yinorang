@@ -15,80 +15,92 @@ const playUpgradeSound = () => {
     upgradeSound.play().catch(error => console.error('업그레이드 사운드 재생 실패:', error));
 };
 
+const playClickSound = () => {
+    const clickSound = new Audio('assets/audio/mixkit-cool-interface-click-tone-2568.mp3');
+    clickSound.volume = 0.5;
+    clickSound.play().catch(error => console.error('클릭 사운드 재생 실패:', error));
+};
+
 const handleMenuClick = (e) => {
     const target = e.target;
     const selectedPlayer = gameState.players[selectedPlayerIndex];
 
     const upgradeButton = target.closest('.upgrade-skill-button, .upgrade-hp-button');
 
-    if (upgradeButton && upgradeButton.dataset.type === 'skill') {
-        const skillIndex = parseInt(upgradeButton.dataset.skillIndex);
-        const skill = selectedPlayer.monster.skills[skillIndex];
+    if (upgradeButton) {
+        if (upgradeButton.dataset.type === 'skill') {
+            const skillIndex = parseInt(upgradeButton.dataset.skillIndex);
+            const skill = selectedPlayer.monster.skills[skillIndex];
 
-        if (selectedPlayer.experience >= skill.requiredExp) {
-            selectedPlayer.experience -= skill.requiredExp;
-            skill.levelUp();
-            gameState.saveState();
-            renderMainMenu();
-            playUpgradeSound();
-        }
-    } else if (upgradeButton && upgradeButton.dataset.type === 'hp') {
-        const monster = selectedPlayer.monster;
-        if (selectedPlayer.experience >= monster.requiredHpExp) {
-            selectedPlayer.experience -= monster.requiredHpExp;
-            monster.levelUpHp();
-            gameState.saveState();
-            renderMainMenu();
-            playUpgradeSound();
-        }
-    } else if (target.closest('.player-summary')) {
-        selectedPlayerIndex = parseInt(target.closest('.player-summary').dataset.playerIndex);
-        renderMainMenu();
-    } else if (target.id === 'change-player-name-button') {
-        showChangeNicknameScreen(selectedPlayerIndex + 1);
-    } else if (target.id === 'change-monster-button') {
-        const player = gameState.players[selectedPlayerIndex];
-        const currentMonsterImage = player && player.monster ? player.monster.imageBase64 : null;
-        showMonsterScreen(selectedPlayerIndex + 1, currentMonsterImage, (imageBase64) => {
-            const monster = new Monster(imageBase64);
-            if (player.monster) {
-                monster.skills = player.monster.skills;
+            if (selectedPlayer.experience >= skill.requiredExp) {
+                selectedPlayer.experience -= skill.requiredExp;
+                skill.levelUp();
+                gameState.saveState();
+                renderMainMenu();
+                playUpgradeSound();
             }
-            player.monster = monster;
-            gameState.saveState();
-            showMainMenu(gameState, battleSystemCallbacks);
-        }, () => showMainMenu(gameState, battleSystemCallbacks));
-    } else if (target.id === 'change-skills-button') {
-        const player = gameState.players[selectedPlayerIndex];
-        const currentSkills = player && player.monster ? player.monster.skills : [{}, {}, {}];
-        showSkillScreen(selectedPlayerIndex + 1, currentSkills, battleSystemCallbacks.skillSoundFiles, (skills) => {
-            player.monster.skills = skills;
-            gameState.saveState();
-            showMainMenu(gameState, battleSystemCallbacks);
-        }, () => showMainMenu(gameState, battleSystemCallbacks));
-    } else if (target.id === 'start-battle-button') {
-        battleSystemCallbacks.startBattleLogic();
-    }
-    else if (target.id === 'reset-exp-button') {
-        showConfirmationModal('(주의) 전투와 관련된 모든 정보가 초기화 됩니다!', () => {
-            gameState.players.forEach(player => {
-                if (player) {
-                    player.experience = 0;
-                    player.winCount = 0;
-                    player.winningStreak = 0;
-                    if (player.monster && player.monster.skills) {
-                        player.monster.skills.forEach(skill => {
-                            skill.level = 1;
-                            skill.minAttack = DEFAULT_MIN_ATTACK;
-                            skill.maxAttack = DEFAULT_MAX_ATTACK;
-                        });
-                        player.monster.hpLevel = 1; // hpLevel 초기화 추가
-                    }
-                }
-            });
-            gameState.saveState();
+        } else if (upgradeButton.dataset.type === 'hp') {
+            const monster = selectedPlayer.monster;
+            if (selectedPlayer.experience >= monster.requiredHpExp) {
+                selectedPlayer.experience -= monster.requiredHpExp;
+                monster.levelUpHp();
+                gameState.saveState();
+                renderMainMenu();
+                playUpgradeSound();
+            }
+        }
+    } else { // 업그레이드 버튼이 아닌 경우
+        playClickSound(); // 클릭 사운드 재생
+
+        if (target.closest('.player-summary')) {
+            selectedPlayerIndex = parseInt(target.closest('.player-summary').dataset.playerIndex);
             renderMainMenu();
-        });
+        } else if (target.id === 'change-player-name-button') {
+            showChangeNicknameScreen(selectedPlayerIndex + 1);
+        } else if (target.id === 'change-monster-button') {
+            const player = gameState.players[selectedPlayerIndex];
+            const currentMonsterImage = player && player.monster ? player.monster.imageBase64 : null;
+            showMonsterScreen(selectedPlayerIndex + 1, currentMonsterImage, (imageBase64) => {
+                const monster = new Monster(imageBase64);
+                if (player.monster) {
+                    monster.skills = player.monster.skills;
+                }
+                player.monster = monster;
+                gameState.saveState();
+                showMainMenu(gameState, battleSystemCallbacks);
+            }, () => showMainMenu(gameState, battleSystemCallbacks));
+        } else if (target.id === 'change-skills-button') {
+            const player = gameState.players[selectedPlayerIndex];
+            const currentSkills = player && player.monster ? player.monster.skills : [{}, {}, {}];
+            showSkillScreen(selectedPlayerIndex + 1, currentSkills, battleSystemCallbacks.skillSoundFiles, (skills) => {
+                player.monster.skills = skills;
+                gameState.saveState();
+                showMainMenu(gameState, battleSystemCallbacks);
+            }, () => showMainMenu(gameState, battleSystemCallbacks));
+        } else if (target.id === 'start-battle-button') {
+            battleSystemCallbacks.startBattleLogic();
+        }
+        else if (target.id === 'reset-exp-button') {
+            showConfirmationModal('(주의) 전투와 관련된 모든 정보가 초기화 됩니다!', () => {
+                gameState.players.forEach(player => {
+                    if (player) {
+                        player.experience = 0;
+                        player.winCount = 0;
+                        player.winningStreak = 0;
+                        if (player.monster && player.monster.skills) {
+                            player.monster.skills.forEach(skill => {
+                                skill.level = 1;
+                                skill.minAttack = DEFAULT_MIN_ATTACK;
+                                skill.maxAttack = DEFAULT_MAX_ATTACK;
+                            });
+                            player.monster.hpLevel = 1; // hpLevel 초기화 추가
+                        }
+                    }
+                });
+                gameState.saveState();
+                renderMainMenu();
+            });
+        }
     }
 };
 
@@ -104,6 +116,7 @@ const showChangeNicknameScreen = (playerNumber) => {
 
     // 닉네임 변경 화면의 이벤트는 일회성이므로 여기서 직접 등록
     document.getElementById('save-nickname-button').addEventListener('click', () => {
+        playClickSound(); // 클릭 사운드 재생
         const newNickname = document.getElementById('nickname-input').value;
         if (newNickname && newNickname.trim() !== '') {
             player.nickname = newNickname.trim();
@@ -115,6 +128,7 @@ const showChangeNicknameScreen = (playerNumber) => {
     });
 
     document.getElementById('cancel-nickname-button').addEventListener('click', () => {
+        playClickSound(); // 클릭 사운드 재생
         showMainMenu(gameState, battleSystemCallbacks);
     });
 };
