@@ -21,12 +21,10 @@ body {
     display: flex;
     flex-direction: column;
 	justify-content: center;
-    /* justify-content: flex-start; */ /* Align content to the top */
     align-items: center;
     background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
     border-radius: 10px; /* Slightly rounded corners */
     transition: all 0.3s ease-in-out; /* Smooth transitions for general elements */
-    /* padding-top: 5px; */ /* Add top padding */
 }
 
 h1 {
@@ -576,6 +574,102 @@ progress::-moz-progress-bar {
     }
 }
 
+@media (min-width: 1024px) {
+    #game-container {
+        width: 1000px; /* Wider for PC screens */
+        height: 600px; /* Taller for PC screens */
+        padding: 20px; /* Restore original padding */
+    }
+
+    h1 {
+        font-size: 32px; /* Larger font size for PC */
+        margin-bottom: 20px; /* Restore original margin */
+        margin-top: 20px; /* Restore original margin */
+    }
+
+    h2 {
+        font-size: 22px; /* Larger font size for PC */
+        margin-top: 10px; /* Restore original margin */
+        margin-bottom: 10px; /* Restore original margin */
+    }
+
+    button {
+        padding: 12px 25px; /* Restore original padding */
+        font-size: 18px; /* Restore original font size */
+        margin: 8px; /* Restore original margin */
+    }
+
+    .main-menu-layout {
+        margin-bottom: 30px; /* Restore original margin */
+        gap: 20px; /* Restore original gap */
+    }
+
+    .player-summary {
+        padding: 15px; /* Restore original padding */
+        width: 45%; /* Restore original width */
+    }
+
+    .player-summary img {
+        max-width: 150px; /* Larger image size for PC */
+        max-height: 150px; /* Larger image size for PC */
+        margin-top: 10px; /* Restore original margin */
+        margin-bottom: 10px; /* Restore original margin */
+    }
+
+    .player-summary p {
+        font-size: 14px; /* Larger font size for PC */
+    }
+
+    .skill-info {
+        font-size: 14px; /* Larger font size for PC */
+        margin: 8px 0; /* Restore original margin */
+        padding: 5px 10px; /* Restore original padding */
+    }
+
+    .upgrade-skill-button {
+        padding: 5px 10px; /* Restore original padding */
+        font-size: 12px; /* Restore original font size */
+    }
+
+    .menu-buttons {
+        padding-top: 20px; /* Restore original padding */
+        margin-top: 20px; /* Restore original margin */
+    }
+
+    .menu-buttons p {
+        font-size: 16px; /* Larger font size for PC */
+        margin-bottom: 15px; /* Restore original margin */
+    }
+
+    hr {
+        margin: 20px 0; /* Restore original margin */
+    }
+
+    .monster {
+        max-width: 250px; /* Larger monster size for PC */
+        max-height: 250px; /* Larger monster size for PC */
+    }
+
+    .battle-log {
+        padding: 15px; /* Restore original padding */
+    }
+
+    .player-info {
+        padding: 10px; /* Restore original padding */
+    }
+
+    .player-info span {
+        font-size: 18px; /* Restore original font size */
+    }
+
+    #turn-indicator {
+        font-size: 22px; /* Restore original font size */
+    }
+
+    .damage-number-in-log {
+        font-size: 1.5em; /* Restore original font size */
+    }
+}
 /* Animation Styles */
 @keyframes shake {
     0%, 100% { transform: translateX(0) scaleX(-1); }
