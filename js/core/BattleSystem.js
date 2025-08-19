@@ -38,7 +38,7 @@ export class BattleSystem {
         // 입힌 데미지 만큼 경험치 획득
         this.currentPlayer.experience += Math.floor(damage / EXPERIENCE_PER_DAMAGE_FACTOR);
 
-        const logMessage = `${this.currentPlayer.nickname}이(가) ${skill.name}(으)로 ${damage}의 데미지를 입혔다!`;
+        const logMessage = `${this.currentPlayer.nickname}이(가) ${skill.name}(을)를 사용하였다!<span class="damage-number-in-log">-${damage}</span>`;
         this.onAttack(logMessage, damage, opponent); // 공격 로그, 데미지, 피격자 정보를 콜백으로 전달
         
         // 전투 종료 확인은 UI 애니메이션 후 main.js에서 호출하도록 변경

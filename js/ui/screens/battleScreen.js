@@ -248,7 +248,7 @@ export const showBattleScreen = (bs, sounds, backToMenuCallback, gs) => {
 
     battleSystem.onAttack = (log, damage, opponent) => {
         const logEl = document.getElementById('battle-log');
-        if (logEl) logEl.innerText = log;
+        if (logEl) logEl.innerHTML = log;
         showDamage(damage, opponent);
         updateBattleScreen();
     };
