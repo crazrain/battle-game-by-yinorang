@@ -139,8 +139,8 @@ input[type="text"]:focus, input[type="file"]:focus {
 }
 .player-summary.selected {
     border-color: #FFD700; /* Gold border when selected */
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.7); /* Gold glow when selected */
-    background-color: rgba(30, 30, 45, 0.8);
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.9); /* Gold glow when selected, 더 강하게 */
+    background-color: rgba(60, 60, 90, 0.9); /* 더 밝고 눈에 띄는 배경색 */
     transform: scale(1.02); /* Slightly larger when selected */
 }
 .player-summary img {
@@ -178,23 +178,43 @@ input[type="text"]:focus, input[type="file"]:focus {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgba(40, 40, 50, 0.5);
     padding: 2px 5px; /* Reduced padding */
     border-radius: 3px;
     border: 1px solid #333;
 }
-.upgrade-skill-button, .upgrade-hp-button {
+.skill-info-active {
+    background-color: rgba(76, 175, 80, 0.5); /* 녹색 계열 배경 */
+}
+.skill-info-disabled {
+    background-color: rgba(255, 0, 0, 0.5); /* 붉은색 계열 배경 */
+}
+.skill-info-inactive {
+    background-color: rgba(40, 40, 50, 0.5); /* 어두운 배경색 */
+}
+.upgrade-skill-button {
     padding: 2px 5px; /* Reduced padding */
     font-size: 12px;
     margin: 0; /* Override general button margin */
-    background: linear-gradient(180deg, #FFA07A, #FF6347); /* Orange-red gradient */
-    border-color: #FF4500;
+    background: linear-gradient(180deg, #2a2a3a, #1a1a2e); /* 어두운 배경색 계열 */
+    border-color: #333;
     box-shadow: none;
 }
-.upgrade-skill-button:hover, .upgrade-hp-button:hover {
-    background: linear-gradient(180deg, #FFB08A, #FFA07A);
-    transform: none;
+.upgrade-hp-button {
+    padding: 2px 5px; /* Reduced padding */
+    font-size: 12px;
+    margin: 0; /* Override general button margin */
+    background: linear-gradient(180deg, #4CAF50, #388E3C); /* 초록색 계열 배경 */
+    border-color: #388E3C;
     box-shadow: none;
+}
+.upgrade-skill-button:hover {
+    background: linear-gradient(180deg, #56c271, #4aa864); /* 플레이어 이름 변경 버튼과 동일한 hover 색상 */
+    transform: scale(1.05); /* 5% 확대 */
+    box-shadow: 0 0 10px rgba(86, 194, 113, 0.7); /* 녹색 빛 그림자 */
+}
+.upgrade-hp-button:hover {
+    transform: scale(1.05); /* 5% 확대 */
+    box-shadow: 0 0 10px rgba(86, 194, 113, 0.7); /* 녹색 빛 그림자 */
 }
 .menu-buttons {
     border-top: 2px solid #ADD8E6; /* Light blue separator */

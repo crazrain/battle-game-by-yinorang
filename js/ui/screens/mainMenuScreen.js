@@ -128,20 +128,30 @@ const renderMainMenu = () => {
                         <span>체력 (Lv.${player.monster.hpLevel}) | ${player.monster.maxHp} HP</span>
                         ${selectedPlayerIndex === playerNumber - 1 ?
                             `<button class="upgrade-hp-button" data-type="hp" ${player.experience < player.monster.requiredHpExp ? 'disabled' : ''}>
-                                체력 업그레이드 (${player.monster.requiredHpExp} EXP)
+                                업그레이드 (${player.monster.requiredHpExp} EXP)
                              </button>` : ''}
                     </div>
                 </div>
                 <div>
-                    ${player.monster.skills.map((skill, index) => `
-                        <div class="skill-info">
-                            <span>${skill.name} (Lv.${skill.level}) | ${skill.minAttack}~${skill.maxAttack}</span>
-                            ${selectedPlayerIndex === playerNumber - 1 ?
-                                `<button class="upgrade-skill-button" data-type="skill" data-skill-index="${index}" ${player.experience < skill.requiredExp ? 'disabled' : ''}>
-                                    업그레이드 (${skill.requiredExp} EXP)
-                                 </button>` : ''}
-                        </div>
-                    `).join('')}
+                    ${player.monster.skills.map((skill, index) => {
+                        let skillInfoClass = 'skill-info-inactive'; // 기본은 선택되지 않은 플레이어의 어두운 배경
+                        if (selectedPlayerIndex === playerNumber - 1) { // 현재 선택된 플레이어
+                            if (player.experience < skill.requiredExp) {
+                                skillInfoClass = 'skill-info-disabled'; // 붉은색
+                            } else {
+                                skillInfoClass = 'skill-info-active'; // 녹색
+                            }
+                        }
+                        return `
+                            <div class="skill-info ${skillInfoClass}">
+                                <span>${skill.name} (Lv.${skill.level}) | ${skill.minAttack}~${skill.maxAttack}</span>
+                                ${selectedPlayerIndex === playerNumber - 1 ?
+                                    `<button class="upgrade-skill-button" data-type="skill" data-skill-index="${index}" ${player.experience < skill.requiredExp ? 'disabled' : ''}>
+                                        업그레이드 (${skill.requiredExp} EXP)
+                                     </button>` : ''}
+                            </div>
+                        `;
+                    }).join('')}
                 </div>
             </div>
         `;
