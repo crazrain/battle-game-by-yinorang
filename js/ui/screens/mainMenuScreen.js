@@ -201,4 +201,9 @@ export const showMainMenu = (gs, callbacks) => {
     gameContainer.addEventListener('click', handleMenuClick);
 };
 
+export const removeMainMenuListener = () => {
+    const gameContainer = document.getElementById('game-container');
+    gameContainer.removeEventListener('click', handleMenuClick);
+};
+
 
