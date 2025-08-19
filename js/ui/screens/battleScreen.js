@@ -12,6 +12,9 @@ const handleBattleClick = (e) => {
     const target = e.target;
 
     if (target.classList.contains('skill-button') && !target.disabled) {
+        // 모든 스킬 버튼 비활성화
+        document.querySelectorAll('.skill-button').forEach(button => button.disabled = true);
+
         const playerNumber = parseInt(target.dataset.player);
         const skillIndex = parseInt(target.dataset.skillIndex);
         const currentPlayerNumber = battleSystem.currentPlayer === battleSystem.player1 ? 1 : 2;
