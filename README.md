@@ -20,4 +20,4 @@ GitHub 저장소의 `Settings` -> `Pages`에서 `main` 브랜치의 `/ (root)`�
 
 ---
 
-[Enjoy The Game!](https://crazrain.github.io/battle-game-by-yinorang/)
+게임 실행 : [Enjoy The Game!](https://crazrain.github.io/battle-game-by-yinorang/)
