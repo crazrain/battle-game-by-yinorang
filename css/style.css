@@ -708,6 +708,11 @@ progress::-moz-progress-bar {
     .damage-number-in-log {
         font-size: 1.5em; /* Restore original font size */
     }
+
+    input[type="text"], input[type="file"] {
+        padding: 10px; /* PC 화면에서 텍스트 박스 패딩 증가 */
+        font-size: 18px; /* PC 화면에서 텍스트 박스 폰트 크기 증가 */
+    }
 }
 /* Animation Styles */
 @keyframes shake {
