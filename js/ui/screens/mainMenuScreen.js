@@ -9,6 +9,12 @@ let selectedPlayerIndex = 0; // 0 for player 1, 1 for player 2
 let gameState;
 let battleSystemCallbacks;
 
+const playUpgradeSound = () => {
+    const upgradeSound = new Audio('assets/audio/mixkit-coins-sound-2003.mp3');
+    upgradeSound.volume = 0.5;
+    upgradeSound.play().catch(error => console.error('업그레이드 사운드 재생 실패:', error));
+};
+
 const handleMenuClick = (e) => {
     const target = e.target;
     const selectedPlayer = gameState.players[selectedPlayerIndex];
@@ -24,6 +30,7 @@ const handleMenuClick = (e) => {
             skill.levelUp();
             gameState.saveState();
             renderMainMenu();
+            playUpgradeSound();
         }
     } else if (upgradeButton && upgradeButton.dataset.type === 'hp') {
         const monster = selectedPlayer.monster;
@@ -32,6 +39,7 @@ const handleMenuClick = (e) => {
             monster.levelUpHp();
             gameState.saveState();
             renderMainMenu();
+            playUpgradeSound();
         }
     } else if (target.closest('.player-summary')) {
         selectedPlayerIndex = parseInt(target.closest('.player-summary').dataset.playerIndex);
