@@ -5,7 +5,6 @@ import { Skill } from '../../core/Skill.js';
 export const getRandomSoundPath = (skillSoundFiles) => {
     const randomIndex = Math.floor(Math.random() * skillSoundFiles.length);
     const soundPath = `assets/audio/${skillSoundFiles[randomIndex]}`;
-    console.log('생성된 랜덤 사운드 경로:', soundPath);
     return soundPath;
 };
 
