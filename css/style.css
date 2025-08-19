@@ -58,6 +58,8 @@ button {
 
 button:hover {
     background: linear-gradient(to bottom, #56c271, #4aa864);
+    transform: scale(1.05); /* 확대 효과 추가 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* 그림자 효과 강화 */
 }
 
 .start-battle-button {
