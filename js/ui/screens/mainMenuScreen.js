@@ -74,6 +74,7 @@ const handleMenuClick = (e) => {
                             skill.minAttack = DEFAULT_MIN_ATTACK;
                             skill.maxAttack = DEFAULT_MAX_ATTACK;
                         });
+                        player.monster.hpLevel = 1; // hpLevel 초기화 추가
                     }
                 }
             });
@@ -135,7 +136,7 @@ const renderMainMenu = () => {
                     <div class="skill-info">
                         <span>체력 (Lv.${player.monster.hpLevel}) | ${player.monster.maxHp} HP</span>
                         ${selectedPlayerIndex === playerNumber - 1 ?
-                            `<button class="upgrade-hp-button" ${player.experience < player.monster.requiredHpExp ? 'disabled' : ''}>
+                            `<button class="upgrade-hp-button" data-type="hp" ${player.experience < player.monster.requiredHpExp ? 'disabled' : ''}>
                                 체력 업그레이드 (${player.monster.requiredHpExp} EXP)
                              </button>` : ''}
                     </div>

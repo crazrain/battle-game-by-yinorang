@@ -58,7 +58,7 @@ const checkGameState = () => {
         });
     } else if (!gameState.players[0].monster) {
         showMonsterScreen(1, null, (imageBase64) => {
-            gameState.players[0].monster = new Monster(imageBase64);
+            gameState.players[0].monster = new Monster(imageBase64, 1); // 초기 hpLevel 1로 설정
             checkGameState();
         }, checkGameState);
     } else if (gameState.players[0].monster.skills.length === 0) {
@@ -74,7 +74,7 @@ const checkGameState = () => {
         });
     } else if (!gameState.players[1].monster) {
         showMonsterScreen(2, null, (imageBase64) => {
-            gameState.players[1].monster = new Monster(imageBase64);
+            gameState.players[1].monster = new Monster(imageBase64, 1); // 초기 hpLevel 1로 설정
             checkGameState();
         }, checkGameState);
     } else if (gameState.players[1].monster.skills.length === 0) {
@@ -101,7 +101,7 @@ const initGame = () => {
                 player.winCount = playerData.winCount || 0; // 승리 횟수 복원
                 player.winningStreak = playerData.winningStreak || 0; // 연승수 복원
                 if (playerData.monster) {
-                    const monster = new Monster(playerData.monster.imageBase64);
+                    const monster = new Monster(playerData.monster.imageBase64, playerData.monster.hpLevel);
                     monster.hp = playerData.monster.hp;
                     if (playerData.monster.skills) {
                         monster.skills = playerData.monster.skills.map(skillData =>

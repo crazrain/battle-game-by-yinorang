@@ -1,11 +1,11 @@
 import { BASE_MONSTER_HP, HP_INCREASE_PER_LEVEL, HP_UPGRADE_REQUIRED_EXP_BASE } from './Skill.js';
 
 export class Monster {
-    constructor(imageBase64) {
+    constructor(imageBase64, hpLevel = 1) {
         this.imageBase64 = imageBase64;
-        this.hpLevel = 1; // 체력 레벨
-        this.hp = this.maxHp; // 현재 HP는 최대 HP로 초기화
-        this.skills = []; // Skill 객체 3개를 담을 배열
+        this.hpLevel = hpLevel;
+        this.hp = this.maxHp; // hpLevel에 따라 초기 hp 설정
+        this.skills = [];
     }
 
     // 최대 HP 계산 (getter)

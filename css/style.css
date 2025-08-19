@@ -626,7 +626,7 @@ progress::-moz-progress-bar {
         padding: 5px 10px; /* Restore original padding */
     }
 
-    .upgrade-skill-button {
+    .upgrade-skill-button, .upgrade-hp-button {
         padding: 5px 10px; /* Restore original padding */
         font-size: 12px; /* Restore original font size */
     }
