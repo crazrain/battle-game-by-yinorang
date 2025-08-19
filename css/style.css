@@ -152,6 +152,23 @@ input[type="text"]:focus, input[type="file"]:focus {
     max-width: 80px; /* Reduced image size */
     max-height: 80px; /* Reduced image size */
 }
+.monster-hp-area {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* 몬스터 이미지와 HP 정보/버튼 그룹 사이 간격 */
+    margin-bottom: 10px; /* 몬스터 영역과 스킬 영역 사이 간격 */
+}
+.hp-info-and-button {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* 텍스트와 버튼을 왼쪽 정렬 */
+    gap: 5px; /* 텍스트와 버튼 사이 간격 */
+}
+.hp-info-and-button span {
+    font-size: 14px; /* HP 정보 텍스트 크기 */
+    color: #ADD8E6; /* HP 정보 텍스트 색상 */
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+}
 .player-summary p {
     font-size: 12px; /* Reduced font size */
 }

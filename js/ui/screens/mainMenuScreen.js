@@ -122,7 +122,16 @@ const renderMainMenu = () => {
             <div class="player-summary ${selectedPlayerIndex === playerNumber - 1 ? 'selected' : ''}" data-player-index="${playerNumber - 1}">
                 <h2>${player.nickname} (경험치: ${player.experience})</h2>
                 <p>승리: ${player.winCount} | 연승: ${player.winningStreak}</p>
-                <img src="${player.monster.imageBase64}" width="100">
+                <div class="monster-hp-area">
+                    <img src="${player.monster.imageBase64}" width="100">
+                    <div class="hp-info-and-button">
+                        <span>체력 (Lv.${player.monster.hpLevel}) | ${player.monster.maxHp} HP</span>
+                        ${selectedPlayerIndex === playerNumber - 1 ?
+                            `<button class="upgrade-hp-button" data-type="hp" ${player.experience < player.monster.requiredHpExp ? 'disabled' : ''}>
+                                체력 업그레이드 (${player.monster.requiredHpExp} EXP)
+                             </button>` : ''}
+                    </div>
+                </div>
                 <div>
                     ${player.monster.skills.map((skill, index) => `
                         <div class="skill-info">
@@ -133,13 +142,6 @@ const renderMainMenu = () => {
                                  </button>` : ''}
                         </div>
                     `).join('')}
-                    <div class="skill-info">
-                        <span>체력 (Lv.${player.monster.hpLevel}) | ${player.monster.maxHp} HP</span>
-                        ${selectedPlayerIndex === playerNumber - 1 ?
-                            `<button class="upgrade-hp-button" data-type="hp" ${player.experience < player.monster.requiredHpExp ? 'disabled' : ''}>
-                                체력 업그레이드 (${player.monster.requiredHpExp} EXP)
-                             </button>` : ''}
-                    </div>
                 </div>
             </div>
         `;
