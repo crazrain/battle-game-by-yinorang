@@ -22,7 +22,10 @@ export const showConfirmationModal = (message, onConfirm) => {
     modalContent.appendChild(messageEl);
     modalContent.appendChild(confirmButton);
     modalContent.appendChild(cancelButton);
-    modalOverlay.appendChild(modalContent);
+    
+    const fragment = document.createDocumentFragment();
+    fragment.appendChild(modalContent);
+    modalOverlay.appendChild(fragment);
     document.body.appendChild(modalOverlay);
 
     const closeModal = () => {
@@ -58,7 +61,10 @@ export const showAlertModal = (message) => {
 
     modalContent.appendChild(messageEl);
     modalContent.appendChild(confirmButton);
-    modalOverlay.appendChild(modalContent);
+    
+    const fragment = document.createDocumentFragment();
+    fragment.appendChild(modalContent);
+    modalOverlay.appendChild(fragment);
     document.body.appendChild(modalOverlay);
 
     const closeModal = () => {

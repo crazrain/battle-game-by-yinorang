@@ -39,13 +39,10 @@ const handleMenuClick = (e) => {
                 playUpgradeSound();
             }
         }
-    } else { // 업그레이드 버튼이 아닌 경우
+    } else if (target.closest('button')) { // 업그레이드 버튼이 아닌 다른 버튼인 경우
         playClickSound(); // 클릭 사운드 재생
 
-        if (target.closest('.player-summary')) {
-            selectedPlayerIndex = parseInt(target.closest('.player-summary').dataset.playerIndex);
-            renderMainMenu();
-        } else if (target.id === 'change-player-name-button') {
+        if (target.id === 'change-player-name-button') {
             showChangeNicknameScreen(selectedPlayerIndex + 1);
         } else if (target.id === 'change-monster-button') {
             const player = gameState.players[selectedPlayerIndex];
@@ -91,6 +88,10 @@ const handleMenuClick = (e) => {
                 renderMainMenu();
             });
         }
+    } else if (target.closest('.player-summary')) { // 플레이어 요약 영역 클릭 시
+        playClickSound(); // 클릭 사운드 재생
+        selectedPlayerIndex = parseInt(target.closest('.player-summary').dataset.playerIndex);
+        renderMainMenu();
     }
 };
 
@@ -146,13 +147,11 @@ const renderMainMenu = () => {
                 </div>
                 <div>
                     ${player.monster.skills.map((skill, index) => {
-                        let skillInfoClass = 'skill-info-inactive'; // 기본은 선택되지 않은 플레이어의 어두운 배경
-                        if (selectedPlayerIndex === playerNumber - 1) { // 현재 선택된 플레이어
-                            if (player.experience < skill.requiredExp) {
-                                skillInfoClass = 'skill-info-disabled'; // 붉은색
-                            } else {
-                                skillInfoClass = 'skill-info-active'; // 녹색
-                            }
+                        let skillInfoClass;
+                        if (selectedPlayerIndex === playerNumber - 1) {
+                            skillInfoClass = player.experience < skill.requiredExp ? 'skill-info-disabled' : 'skill-info-active';
+                        } else {
+                            skillInfoClass = 'skill-info-inactive';
                         }
                         return `
                             <div class="skill-info ${skillInfoClass}">

@@ -1,4 +1,5 @@
 import { BASE_MONSTER_HP, HP_INCREASE_PER_LEVEL, HP_UPGRADE_REQUIRED_EXP_BASE } from './Skill.js';
+import { Skill } from './Skill.js'; // Skill 클래스 임포트 추가
 
 export class Monster {
     constructor(imageBase64, hpLevel = 1) {
@@ -28,10 +29,11 @@ export class Monster {
 
     // JSON 데이터로부터 Monster 인스턴스를 생성하는 정적 팩토리 메서드
     static fromJSON(monsterData) {
-        const monster = new Monster(monsterData.imageBase64);
-        monster.hpLevel = monsterData.hpLevel || 1;
-        monster.hp = monsterData.hp; // 저장된 현재 HP 복원
-        // skills는 Player.fromJSON에서 처리하므로 여기서는 복원하지 않습니다.
+        const monster = new Monster(monsterData.imageBase64, monsterData.hpLevel);
+        monster.hp = monsterData.hp;
+        if (monsterData.skills) {
+            monster.skills = monsterData.skills.map(skillData => Skill.fromJSON(skillData));
+        }
         return monster;
     }
 }

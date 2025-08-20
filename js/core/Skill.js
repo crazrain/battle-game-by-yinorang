@@ -30,5 +30,10 @@ export class Skill {
         this.minAttack += ATTACK_INCREASE_PER_LEVEL;
         this.maxAttack += ATTACK_INCREASE_PER_LEVEL;
     }
+
+    // JSON 데이터로부터 Skill 인스턴스를 생성하는 정적 팩토리 메서드
+    static fromJSON(skillData) {
+        return new Skill(skillData.name, skillData.minAttack, skillData.maxAttack, skillData.level, skillData.soundPath);
+    }
 }
 

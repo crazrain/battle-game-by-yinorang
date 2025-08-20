@@ -1,6 +1,6 @@
 import { renderScreen } from '../screenUtils.js';
 import { getRandomSoundPath } from './skillScreen.js';
-import { playClickSound } from '../../utils/audioUtils.js';
+import { playClickSound, playCachedSound } from '../../utils/audioUtils.js'; // playCachedSound 임포트
 
 let battleSystem;
 let skillSoundFiles;
@@ -8,6 +8,19 @@ let onBackToMenu;
 let eventListenerAttached = false;
 let previousP1Hp;
 let previousP2Hp;
+
+// DOM 요소 캐싱용 변수
+let p1HpBar;
+let p1DamageOverlay;
+let p2HpBar;
+let p2DamageOverlay;
+let turnIndicator;
+let p1SkillsContainer;
+let p2SkillsContainer;
+let battleLogElement;
+let p1MonsterImg;
+let p2MonsterImg;
+let monsterArea;
 
 const handleBattleClick = (e) => {
     const target = e.target;
@@ -25,9 +38,7 @@ const handleBattleClick = (e) => {
             const skill = battleSystem.currentPlayer.monster.skills[skillIndex];
             const soundPathToPlay = getRandomSoundPath(skillSoundFiles);
             if (soundPathToPlay) {
-                const sound = new Audio(soundPathToPlay);
-                sound.volume = 0.5;
-                sound.play().catch(error => console.error('스킬 사운드 재생 실패:', error));
+                playCachedSound(soundPathToPlay); // playCachedSound 사용
             }
 
             // 애니메이션 적용
@@ -130,10 +141,10 @@ const updateBattleScreen = () => {
         overlay.style.width = `${Math.max(0, damagePct)}%`;
         overlay.style.right = `${Math.max(0, 100 - prevPct)}%`;
 
-        overlay.offsetWidth;
-
-        overlay.style.transition = 'opacity 1s ease-out';
-        overlay.style.opacity = 1;
+        requestAnimationFrame(() => {
+            overlay.style.transition = 'opacity 1s ease-out';
+            overlay.style.opacity = 1;
+        });
 
         overlay._fadeTimer = setTimeout(() => {
             overlay.style.opacity = 0;

@@ -9,8 +9,48 @@ export const getRandomSoundPath = (skillSoundFiles) => {
     return soundPath;
 };
 
+let onSaveSkillsCallback;
+let onCancelSkillsCallback;
+let saveSkillsButton;
+let cancelSkillsButton;
+let skill1NameInput;
+let skill2NameInput;
+let skill3NameInput;
+let currentSkillSoundFiles; // skillSoundFiles를 저장할 변수 추가
+
+const handleCancelSkillsClick = () => {
+    playClickSound();
+    if (onCancelSkillsCallback) {
+        onCancelSkillsCallback();
+    }
+};
+
+const handleSaveSkillsClick = () => {
+    playClickSound();
+    const skill1Name = skill1NameInput.value;
+    const skill2Name = skill2NameInput.value;
+    const skill3Name = skill3NameInput.value;
+
+    if (skill1Name && skill2Name && skill3Name) {
+        const skills = [
+            new Skill(skill1Name, undefined, undefined, 1, getRandomSoundPath(currentSkillSoundFiles)),
+            new Skill(skill2Name, undefined, undefined, 1, getRandomSoundPath(currentSkillSoundFiles)),
+            new Skill(skill3Name, undefined, undefined, 1, getRandomSoundPath(currentSkillSoundFiles))
+        ];
+        if (onSaveSkillsCallback) {
+            onSaveSkillsCallback(skills);
+        }
+    } else {
+        showAlertModal('모든 스킬의 이름을 입력해주세요.');
+    }
+};
+
 // 스킬 생성 화면
 export const showSkillScreen = (playerNumber, currentSkills, skillSoundFiles, onSave, onCancel) => {
+    onSaveSkillsCallback = onSave;
+    onCancelSkillsCallback = onCancel;
+    currentSkillSoundFiles = skillSoundFiles; // skillSoundFiles 저장
+
     const html = `
         <h2>플레이어 ${playerNumber} 스킬 설정</h2>
         <p>스킬 3개의 이름을 정해주세요.</p>
@@ -22,26 +62,33 @@ export const showSkillScreen = (playerNumber, currentSkills, skillSoundFiles, on
     `;
     renderScreen(html);
 
-    document.getElementById('cancel-skills-button').addEventListener('click', () => {
-        playClickSound();
-        onCancel();
-    });
+    skill1NameInput = document.getElementById('skill1-name');
+    skill2NameInput = document.getElementById('skill2-name');
+    skill3NameInput = document.getElementById('skill3-name');
+    saveSkillsButton = document.getElementById('save-skills-button');
+    cancelSkillsButton = document.getElementById('cancel-skills-button');
 
-    document.getElementById('save-skills-button').addEventListener('click', () => {
-        playClickSound();
-        const skill1Name = document.getElementById('skill1-name').value;
-        const skill2Name = document.getElementById('skill2-name').value;
-        const skill3Name = document.getElementById('skill3-name').value;
+    if (cancelSkillsButton) {
+        cancelSkillsButton.addEventListener('click', handleCancelSkillsClick);
+    }
+    if (saveSkillsButton) {
+        saveSkillsButton.addEventListener('click', handleSaveSkillsClick);
+    }
+};
 
-        if (skill1Name && skill2Name && skill3Name) {
-            const skills = [
-                new Skill(skill1Name, undefined, undefined, 1, getRandomSoundPath(skillSoundFiles)),
-                new Skill(skill2Name, undefined, undefined, 1, getRandomSoundPath(skillSoundFiles)),
-                new Skill(skill3Name, undefined, undefined, 1, getRandomSoundPath(skillSoundFiles))
-            ];
-            onSave(skills);
-        } else {
-            showAlertModal('모든 스킬의 이름을 입력해주세요.');
-        }
-    });
+export const removeSkillScreenListener = () => {
+    if (cancelSkillsButton) {
+        cancelSkillsButton.removeEventListener('click', handleCancelSkillsClick);
+        cancelSkillsButton = null;
+    }
+    if (saveSkillsButton) {
+        saveSkillsButton.removeEventListener('click', handleSaveSkillsClick);
+        saveSkillsButton = null;
+    }
+    skill1NameInput = null;
+    skill2NameInput = null;
+    skill3NameInput = null;
+    onSaveSkillsCallback = null;
+    onCancelSkillsCallback = null;
+    currentSkillSoundFiles = null;
 };
