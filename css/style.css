@@ -535,7 +535,7 @@ progress::-moz-progress-bar {
     }
 
     #game-container {
-        margin-top: 5px; /* 상단에 5px 마진 추가 */
+        margin-top: 25px; /* 상단에 25px 마진 추가 */
     }
 }
 @media (max-width: 790px) {
