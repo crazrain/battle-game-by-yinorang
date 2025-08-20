@@ -529,6 +529,15 @@ progress::-moz-progress-bar {
 }
 
 /* Responsive Styles */
+@media (max-width: 1023px) {
+    body {
+        align-items: flex-start; /* 콘텐츠를 위쪽으로 정렬 */
+    }
+
+    #game-container {
+        margin-top: 5px; /* 상단에 5px 마진 추가 */
+    }
+}
 @media (max-width: 790px) {
     #game-container {
         width: 100%;
